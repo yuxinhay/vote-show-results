@@ -96,6 +96,7 @@ const Admin = () => {
   const pendingItems = painPoints.filter(pp => pp.status === 'pending');
   const approvedItems = painPoints.filter(pp => pp.status === 'approved');
   const rejectedItems = painPoints.filter(pp => pp.status === 'rejected');
+  const archivedItems = painPoints.filter(pp => pp.status === 'archived');
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
@@ -182,14 +183,42 @@ const Admin = () => {
               {approvedItems.map((pp) => (
                 <Card key={pp.id} className="bg-muted/30">
                   <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="font-medium">{pp.title}</p>
                         <p className="text-sm text-muted-foreground">
                           {pp.is_anonymous ? 'Anonymous' : pp.submitter_name}
                         </p>
                       </div>
-                      <Badge variant="outline" className="text-primary">Approved</Badge>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                          onClick={() => handleReject(pp.id)}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Reject
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={async () => {
+                            const { error } = await supabase
+                              .from('pain_points')
+                              .update({ status: 'archived' })
+                              .eq('id', pp.id);
+                            if (error) {
+                              toast.error('Failed to archive');
+                            } else {
+                              toast.success('Archived');
+                              fetchPainPoints();
+                            }
+                          }}
+                        >
+                          Archive
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -219,6 +248,35 @@ const Admin = () => {
                         </p>
                       </div>
                       <Badge variant="outline" className="text-destructive">Rejected</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            Archived
+            <Badge variant="secondary">{archivedItems.length}</Badge>
+          </h2>
+          
+          {archivedItems.length === 0 ? (
+            <p className="text-muted-foreground py-8 text-center">No archived items</p>
+          ) : (
+            <div className="space-y-2">
+              {archivedItems.map((pp) => (
+                <Card key={pp.id} className="bg-muted/50 opacity-75">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{pp.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {pp.is_anonymous ? 'Anonymous' : pp.submitter_name}
+                        </p>
+                      </div>
+                      <Badge variant="outline">Archived</Badge>
                     </div>
                   </CardContent>
                 </Card>
