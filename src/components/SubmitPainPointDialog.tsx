@@ -8,7 +8,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -16,39 +16,30 @@ import { Plus, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface SubmitPainPointDialogProps {
-  onSubmit: (title: string, name: string, department?: string, isAnonymous?: boolean) => Promise<boolean>;
+  onSubmit: (title: string, isAnonymous?: boolean) => Promise<boolean>;
 }
 
 export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
-  const [name, setName] = useState('');
-  const [department, setDepartment] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!title.trim() || !name.trim()) {
-      toast.error('Please fill in all required fields');
+    if (!title.trim()) {
+      toast.error('Please describe the problem');
       return;
     }
 
     setIsSubmitting(true);
-    const success = await onSubmit(
-      title.trim(), 
-      name.trim(), 
-      department.trim() || undefined,
-      isAnonymous
-    );
+    const success = await onSubmit(title.trim(), isAnonymous);
     setIsSubmitting(false);
 
     if (success) {
       toast.success('Submitted! Your pain point will be reviewed before publishing.');
       setTitle('');
-      setName('');
-      setDepartment('');
       setIsAnonymous(false);
       setOpen(false);
     } else {
@@ -88,31 +79,13 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div className="space-y-2">
             <Label htmlFor="title">What's the problem? *</Label>
-            <Input
+            <Textarea
               id="title"
-              placeholder="Describe the pain point..."
+              placeholder="Describe the pain point in detail..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="name">Your Name *</Label>
-            <Input
-              id="name"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="department">Department (optional)</Label>
-            <Input
-              id="department"
-              placeholder="e.g., IT, HR, Finance"
-              value={department}
-              onChange={(e) => setDepartment(e.target.value)}
+              className="min-h-[120px] resize-none"
             />
           </div>
 

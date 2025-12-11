@@ -87,18 +87,19 @@ export function usePainPoints() {
 
   const submitPainPoint = async (
     title: string, 
-    submitterName: string, 
-    department?: string,
     isAnonymous?: boolean
   ) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    const submitterName = user?.email || 'Unknown User';
+
     const { error } = await supabase
       .from('pain_points')
       .insert({
         title,
         submitter_name: submitterName,
-        submitter_department: department || null,
+        submitter_department: null,
         is_anonymous: isAnonymous || false,
-        is_approved: false, // Requires admin approval
+        is_approved: false,
       });
 
     if (error) {
