@@ -8,6 +8,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -19,6 +21,7 @@ interface Comment {
   content: string;
   created_at: string;
   user_id: string;
+  is_anonymous: boolean;
   display_name?: string;
 }
 
@@ -38,6 +41,7 @@ export function CommentsDialog({
   const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -51,7 +55,7 @@ export function CommentsDialog({
     setIsLoading(true);
     const { data: commentsData, error } = await supabase
       .from('comments')
-      .select('id, content, created_at, user_id')
+      .select('id, content, created_at, user_id, is_anonymous')
       .eq('pain_point_id', painPointId)
       .order('created_at', { ascending: true });
 
@@ -78,7 +82,7 @@ export function CommentsDialog({
 
     const commentsWithNames = (commentsData || []).map(c => ({
       ...c,
-      display_name: profilesMap[c.user_id] || 'User',
+      display_name: c.is_anonymous ? 'Anonymous' : (profilesMap[c.user_id] || 'User'),
     }));
 
     setComments(commentsWithNames);
@@ -98,12 +102,14 @@ export function CommentsDialog({
         pain_point_id: painPointId,
         user_id: user.id,
         content: newComment.trim(),
+        is_anonymous: isAnonymous,
       });
 
     if (error) {
       toast.error('Failed to post comment');
     } else {
       setNewComment('');
+      setIsAnonymous(false);
       fetchComments();
     }
 
@@ -129,7 +135,7 @@ export function CommentsDialog({
                 <div key={comment.id} className="bg-muted/50 rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-sm font-medium">
-                      {comment.display_name || 'User'}
+                      {comment.display_name}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {format(new Date(comment.created_at), 'dd MMM, HH:mm')}
@@ -142,16 +148,28 @@ export function CommentsDialog({
           )}
         </ScrollArea>
 
-        <form onSubmit={handleSubmit} className="flex gap-2 pt-4 border-t">
-          <Textarea
-            placeholder="Add a comment..."
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="min-h-[60px] resize-none"
-          />
-          <Button type="submit" size="icon" disabled={isSubmitting || !newComment.trim()}>
-            <Send className="h-4 w-4" />
-          </Button>
+        <form onSubmit={handleSubmit} className="space-y-3 pt-4 border-t">
+          <div className="flex gap-2">
+            <Textarea
+              placeholder="Add a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              className="min-h-[60px] resize-none"
+            />
+            <Button type="submit" size="icon" disabled={isSubmitting || !newComment.trim()}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="anonymous-comment"
+              checked={isAnonymous}
+              onCheckedChange={(checked) => setIsAnonymous(checked === true)}
+            />
+            <Label htmlFor="anonymous-comment" className="text-sm text-muted-foreground cursor-pointer">
+              Post anonymously
+            </Label>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
