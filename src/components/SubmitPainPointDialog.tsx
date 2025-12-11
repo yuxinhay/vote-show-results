@@ -96,7 +96,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
               />
             </div>
 
-            <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${isAnonymous ? 'bg-green-50' : 'bg-[#e8e8e8]'}`}>
+            <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${isAnonymous ? 'bg-green-100' : 'bg-[#e8e8e8]'}`}>
               <div>
                 <Label htmlFor="anonymous" className="text-sm font-medium">Submit Anonymously</Label>
                 <p className="text-xs text-muted-foreground">Your name won't be shown publicly</p>
