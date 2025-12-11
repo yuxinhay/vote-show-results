@@ -37,7 +37,7 @@ export function usePainPoints() {
     const { data: painPointsData, error: painPointsError } = await supabase
       .from('pain_points')
       .select('*')
-      .eq('is_approved', true)
+      .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
     if (painPointsError) {
@@ -99,7 +99,7 @@ export function usePainPoints() {
         submitter_name: submitterName,
         submitter_department: null,
         is_anonymous: isAnonymous || false,
-        is_approved: false,
+        status: 'pending',
       });
 
     if (error) {
