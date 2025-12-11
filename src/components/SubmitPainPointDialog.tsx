@@ -32,7 +32,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(true); // TODO: revert to false
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
