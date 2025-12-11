@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,16 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
   const [title, setTitle] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(true); // TODO: revert to false
+
+  useEffect(() => {
+    if (showSuccessModal) {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }
+  }, [showSuccessModal]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
