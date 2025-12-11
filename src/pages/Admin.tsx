@@ -276,7 +276,14 @@ const Admin = () => {
                           {pp.is_anonymous ? 'Anonymous' : pp.submitter_name}
                         </p>
                       </div>
-                      <Badge variant="outline">Archived</Badge>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleApprove(pp.id)}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Restore
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>

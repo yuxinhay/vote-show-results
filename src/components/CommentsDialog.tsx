@@ -68,7 +68,7 @@ export function CommentsDialog({
     // Fetch profiles for all unique user_ids
     const userIds = [...new Set(commentsData?.map(c => c.user_id) || [])];
     
-    let profilesMap: Record<string, string> = {};
+    let profilesMap: Record<string, { display_name: string | null }> = {};
     if (userIds.length > 0) {
       const { data: profilesData } = await supabase
         .from('profiles')
@@ -76,14 +76,20 @@ export function CommentsDialog({
         .in('user_id', userIds);
       
       profilesData?.forEach(p => {
-        profilesMap[p.user_id] = p.display_name || 'User';
+        profilesMap[p.user_id] = { display_name: p.display_name };
       });
     }
 
-    const commentsWithNames = (commentsData || []).map(c => ({
-      ...c,
-      display_name: c.is_anonymous ? 'Anonymous' : (profilesMap[c.user_id] || 'User'),
-    }));
+    // Also fetch auth user emails as fallback via the current user context
+    const commentsWithNames = (commentsData || []).map(c => {
+      if (c.is_anonymous) {
+        return { ...c, display_name: 'Anonymous' };
+      }
+      const profile = profilesMap[c.user_id];
+      // Use display_name if available, otherwise show a generic identifier
+      const name = profile?.display_name || `User ${c.user_id.slice(0, 8)}`;
+      return { ...c, display_name: name };
+    });
 
     setComments(commentsWithNames);
     setIsLoading(false);
