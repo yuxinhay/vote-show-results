@@ -6,7 +6,8 @@ import { PainPointCard } from '@/components/PainPointCard';
 import { SubmitPainPointDialog } from '@/components/SubmitPainPointDialog';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, Gift, Sparkles } from 'lucide-react';
+import govwalletLogo from '@/assets/govwallet-logo.png';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -37,6 +38,22 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background py-8 px-4">
       <div className="max-w-6xl mx-auto space-y-8">
+        {/* Incentive Banner */}
+        <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-rose-500 via-red-500 to-orange-500 p-4 shadow-lg">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
+          <div className="relative flex flex-col md:flex-row items-center justify-center gap-4 text-white">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-6 w-6 animate-pulse" />
+              <span className="text-lg font-bold">Win $10</span>
+            </div>
+            <img src={govwalletLogo} alt="GovWallet" className="h-8 bg-white rounded px-2 py-1" />
+            <p className="text-center md:text-left font-medium">
+              Submit your problem statement or upvote to stand a chance to win!
+            </p>
+            <Gift className="h-6 w-6 hidden md:block" />
+          </div>
+        </div>
+
         <header className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Pain Points</h1>
@@ -95,6 +112,13 @@ const Index = () => {
             </div>
           )}
         </section>
+
+        {/* Submission Deadline Notice */}
+        <footer className="text-center py-4 border-t border-border">
+          <p className="text-sm text-muted-foreground">
+            Submissions close on <span className="font-semibold text-foreground">31 December 2025</span>. Winners will be announced in January 2026.
+          </p>
+        </footer>
       </div>
     </div>
   );
