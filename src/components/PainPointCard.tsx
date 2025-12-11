@@ -92,7 +92,7 @@ export function PainPointCard({
                 size="icon"
                 onClick={() => onUpvote(id)}
                 disabled={hasVoted}
-                className={hasVoted ? "text-primary" : "text-muted-foreground hover:text-primary"}
+                className={hasVoted ? "bg-orange-100 text-primary hover:bg-orange-100" : "text-muted-foreground hover:text-primary"}
               >
                 <ThumbsUp className={`h-5 w-5 ${hasVoted ? 'fill-current' : ''}`} />
               </Button>
