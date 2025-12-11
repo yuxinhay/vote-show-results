@@ -70,7 +70,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
             </DialogDescription>
           </DialogHeader>
 
-          <Alert className="bg-orange-100 border-orange-200">
+          <Alert className="bg-muted border-border">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
               <strong>Submission Criteria:</strong>
