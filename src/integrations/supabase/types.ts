@@ -53,6 +53,7 @@ export type Database = {
           id: string
           is_anonymous: boolean
           is_approved: boolean
+          status: string
           submitter_department: string | null
           submitter_name: string
           title: string
@@ -63,6 +64,7 @@ export type Database = {
           id?: string
           is_anonymous?: boolean
           is_approved?: boolean
+          status?: string
           submitter_department?: string | null
           submitter_name: string
           title: string
@@ -73,6 +75,7 @@ export type Database = {
           id?: string
           is_anonymous?: boolean
           is_approved?: boolean
+          status?: string
           submitter_department?: string | null
           submitter_name?: string
           title?: string

@@ -15,7 +15,7 @@ interface PendingPainPoint {
   submitter_name: string;
   submitter_department: string | null;
   is_anonymous: boolean;
-  is_approved: boolean;
+  status: string;
   created_at: string;
 }
 
@@ -58,7 +58,7 @@ const Admin = () => {
   const handleApprove = async (id: string) => {
     const { error } = await supabase
       .from('pain_points')
-      .update({ is_approved: true })
+      .update({ status: 'approved' })
       .eq('id', id);
 
     if (error) {
@@ -73,7 +73,7 @@ const Admin = () => {
   const handleReject = async (id: string) => {
     const { error } = await supabase
       .from('pain_points')
-      .update({ is_approved: false })
+      .update({ status: 'rejected' })
       .eq('id', id);
 
     if (error) {
@@ -93,8 +93,9 @@ const Admin = () => {
     );
   }
 
-  const pendingItems = painPoints.filter(pp => !pp.is_approved);
-  const approvedItems = painPoints.filter(pp => pp.is_approved);
+  const pendingItems = painPoints.filter(pp => pp.status === 'pending');
+  const approvedItems = painPoints.filter(pp => pp.status === 'approved');
+  const rejectedItems = painPoints.filter(pp => pp.status === 'rejected');
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
@@ -189,6 +190,35 @@ const Admin = () => {
                         </p>
                       </div>
                       <Badge variant="outline" className="text-primary">Approved</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section>
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            Rejected
+            <Badge variant="secondary">{rejectedItems.length}</Badge>
+          </h2>
+          
+          {rejectedItems.length === 0 ? (
+            <p className="text-muted-foreground py-8 text-center">No rejected items</p>
+          ) : (
+            <div className="space-y-2">
+              {rejectedItems.map((pp) => (
+                <Card key={pp.id} className="bg-destructive/10">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium">{pp.title}</p>
+                        <p className="text-sm text-muted-foreground">
+                          {pp.is_anonymous ? 'Anonymous' : pp.submitter_name}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className="text-destructive">Rejected</Badge>
                     </div>
                   </CardContent>
                 </Card>
