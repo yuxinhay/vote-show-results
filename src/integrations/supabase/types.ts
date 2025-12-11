@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      pain_points: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_approved: boolean
+          submitter_department: string | null
+          submitter_name: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_approved?: boolean
+          submitter_department?: string | null
+          submitter_name: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_approved?: boolean
+          submitter_department?: string | null
+          submitter_name?: string
+          title?: string
+        }
+        Relationships: []
+      }
       poll_options: {
         Row: {
           created_at: string
@@ -63,6 +93,32 @@ export type Database = {
           question?: string
         }
         Relationships: []
+      }
+      upvotes: {
+        Row: {
+          created_at: string
+          id: string
+          pain_point_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pain_point_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pain_point_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "upvotes_pain_point_id_fkey"
+            columns: ["pain_point_id"]
+            isOneToOne: false
+            referencedRelation: "pain_points"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       votes: {
         Row: {
