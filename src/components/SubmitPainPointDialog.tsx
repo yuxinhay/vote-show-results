@@ -22,7 +22,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Plus, AlertCircle, PartyPopper } from 'lucide-react';
 
 interface SubmitPainPointDialogProps {
   onSubmit: (title: string, isAnonymous?: boolean) => Promise<boolean>;
@@ -133,13 +133,9 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
 
       <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <AlertDialogContent>
-          <AlertDialogHeader>
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                <CheckCircle2 className="h-5 w-5 text-primary" />
-              </div>
-              <AlertDialogTitle>Submission Received!</AlertDialogTitle>
-            </div>
+          <AlertDialogHeader className="flex flex-col items-center text-center">
+            <PartyPopper className="h-16 w-16 text-primary mb-2" />
+            <AlertDialogTitle>Submission Received!</AlertDialogTitle>
             <AlertDialogDescription className="pt-2">
               Thank you for your submission! Your pain point has been received and will be reviewed by our team before it appears on the main page. This process helps ensure all submissions meet our quality guidelines.
             </AlertDialogDescription>
