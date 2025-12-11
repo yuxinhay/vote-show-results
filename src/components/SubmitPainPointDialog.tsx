@@ -1,34 +1,19 @@
 import { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-} from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Plus, AlertCircle, PartyPopper } from 'lucide-react';
-
 interface SubmitPainPointDialogProps {
   onSubmit: (title: string, isAnonymous?: boolean) => Promise<boolean>;
 }
-
-export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) {
+export function SubmitPainPointDialog({
+  onSubmit
+}: SubmitPainPointDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState('');
@@ -40,22 +25,20 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
       confetti({
         particleCount: 100,
         spread: 70,
-        origin: { y: 0.6 }
+        origin: {
+          y: 0.6
+        }
       });
     }
   }, [showSuccessModal]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!title.trim()) {
       return;
     }
-
     setIsSubmitting(true);
     const success = await onSubmit(title.trim(), isAnonymous);
     setIsSubmitting(false);
-
     if (success) {
       setTitle('');
       setIsAnonymous(false);
@@ -63,9 +46,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
       setShowSuccessModal(true);
     }
   };
-
-  return (
-    <>
+  return <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="gap-2">
@@ -97,14 +78,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
             <div className="space-y-2">
               <Label htmlFor="title">What's the problem? *</Label>
-              <Textarea
-                id="title"
-                placeholder="Describe the pain point in detail..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-                className="min-h-[120px] resize-none"
-              />
+              <Textarea id="title" placeholder="Describe the pain point in detail..." value={title} onChange={e => setTitle(e.target.value)} required className="min-h-[120px] resize-none" />
             </div>
 
             <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${isAnonymous ? 'bg-green-100' : 'bg-[#e8e8e8]'}`}>
@@ -112,11 +86,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
                 <Label htmlFor="anonymous" className="text-sm font-medium">Submit Anonymously</Label>
                 <p className="text-xs text-muted-foreground">Your name won't be shown publicly</p>
               </div>
-              <Switch
-                id="anonymous"
-                checked={isAnonymous}
-                onCheckedChange={setIsAnonymous}
-              />
+              <Switch id="anonymous" checked={isAnonymous} onCheckedChange={setIsAnonymous} />
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
@@ -134,7 +104,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
       <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <AlertDialogContent>
           <AlertDialogHeader className="flex flex-col items-center text-center">
-            <PartyPopper className="h-16 w-16 text-primary mb-2" />
+            <PartyPopper className="text-primary mb-2 w-[100px] h-[100px]" />
             <AlertDialogTitle>Submission Received!</AlertDialogTitle>
             <AlertDialogDescription className="pt-2">
               Thank you for your submission! Your pain point has been received and will be reviewed by our team before it appears on the main page. This process helps ensure all submissions meet our quality guidelines.
@@ -147,6 +117,5 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
-  );
+    </>;
 }
