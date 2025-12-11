@@ -70,7 +70,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
             </DialogDescription>
           </DialogHeader>
 
-          <Alert className="bg-gray-100 border-gray-200">
+          <Alert className="bg-blue-50 border-blue-200">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
               <strong>Submission Criteria:</strong>
@@ -96,7 +96,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
               />
             </div>
 
-            <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${isAnonymous ? 'bg-green-100' : 'bg-gray-100'}`}>
+            <div className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${isAnonymous ? 'bg-green-100' : 'bg-blue-50'}`}>
               <div>
                 <Label htmlFor="anonymous" className="text-sm font-medium">Submit Anonymously</Label>
                 <p className="text-xs text-muted-foreground">Your name won't be shown publicly</p>
