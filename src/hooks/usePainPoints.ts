@@ -7,12 +7,14 @@ interface PainPoint {
   description: string | null;
   submitter_name: string;
   submitter_department: string | null;
+  is_anonymous: boolean;
   created_at: string;
 }
 
 interface PainPointWithVotes extends PainPoint {
   vote_count: number;
   has_voted: boolean;
+  comment_count: number;
 }
 
 const VOTED_PAIN_POINTS_KEY = 'voted_pain_points';
@@ -35,6 +37,7 @@ export function usePainPoints() {
     const { data: painPointsData, error: painPointsError } = await supabase
       .from('pain_points')
       .select('*')
+      .eq('is_approved', true)
       .order('created_at', { ascending: false });
 
     if (painPointsError) {
@@ -51,29 +54,51 @@ export function usePainPoints() {
       return;
     }
 
+    const { data: commentsData, error: commentsError } = await supabase
+      .from('comments')
+      .select('pain_point_id');
+
+    if (commentsError) {
+      console.error('Error fetching comments:', commentsError);
+    }
+
     const voteCounts: Record<string, number> = {};
     upvotesData?.forEach(upvote => {
       voteCounts[upvote.pain_point_id] = (voteCounts[upvote.pain_point_id] || 0) + 1;
+    });
+
+    const commentCounts: Record<string, number> = {};
+    commentsData?.forEach(comment => {
+      commentCounts[comment.pain_point_id] = (commentCounts[comment.pain_point_id] || 0) + 1;
     });
 
     const votedIds = getVotedPainPoints();
 
     const painPointsWithVotes: PainPointWithVotes[] = (painPointsData || []).map(pp => ({
       ...pp,
+      is_anonymous: pp.is_anonymous ?? false,
       vote_count: voteCounts[pp.id] || 0,
       has_voted: votedIds.includes(pp.id),
+      comment_count: commentCounts[pp.id] || 0,
     }));
 
     setPainPoints(painPointsWithVotes);
   };
 
-  const submitPainPoint = async (title: string, submitterName: string, department?: string) => {
+  const submitPainPoint = async (
+    title: string, 
+    submitterName: string, 
+    department?: string,
+    isAnonymous?: boolean
+  ) => {
     const { error } = await supabase
       .from('pain_points')
       .insert({
         title,
         submitter_name: submitterName,
         submitter_department: department || null,
+        is_anonymous: isAnonymous || false,
+        is_approved: false, // Requires admin approval
       });
 
     if (error) {
@@ -81,7 +106,6 @@ export function usePainPoints() {
       return false;
     }
 
-    await fetchPainPoints();
     return true;
   };
 

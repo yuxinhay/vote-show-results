@@ -1,0 +1,159 @@
+import { useState, useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { format } from 'date-fns';
+import { Send } from 'lucide-react';
+
+interface Comment {
+  id: string;
+  content: string;
+  created_at: string;
+  user_id: string;
+  display_name?: string;
+}
+
+interface CommentsDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  painPointId: string;
+  painPointTitle: string;
+}
+
+export function CommentsDialog({
+  open,
+  onOpenChange,
+  painPointId,
+  painPointTitle,
+}: CommentsDialogProps) {
+  const { user } = useAuth();
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (open && painPointId) {
+      fetchComments();
+    }
+  }, [open, painPointId]);
+
+  const fetchComments = async () => {
+    setIsLoading(true);
+    const { data: commentsData, error } = await supabase
+      .from('comments')
+      .select('id, content, created_at, user_id')
+      .eq('pain_point_id', painPointId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching comments:', error);
+      setIsLoading(false);
+      return;
+    }
+
+    // Fetch profiles for all unique user_ids
+    const userIds = [...new Set(commentsData?.map(c => c.user_id) || [])];
+    
+    let profilesMap: Record<string, string> = {};
+    if (userIds.length > 0) {
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('user_id, display_name')
+        .in('user_id', userIds);
+      
+      profilesData?.forEach(p => {
+        profilesMap[p.user_id] = p.display_name || 'User';
+      });
+    }
+
+    const commentsWithNames = (commentsData || []).map(c => ({
+      ...c,
+      display_name: profilesMap[c.user_id] || 'User',
+    }));
+
+    setComments(commentsWithNames);
+    setIsLoading(false);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newComment.trim() || !user) return;
+
+    setIsSubmitting(true);
+
+    const { error } = await supabase
+      .from('comments')
+      .insert({
+        pain_point_id: painPointId,
+        user_id: user.id,
+        content: newComment.trim(),
+      });
+
+    if (error) {
+      toast.error('Failed to post comment');
+    } else {
+      setNewComment('');
+      fetchComments();
+    }
+
+    setIsSubmitting(false);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle className="text-lg">Comments</DialogTitle>
+          <p className="text-sm text-muted-foreground line-clamp-2">{painPointTitle}</p>
+        </DialogHeader>
+
+        <ScrollArea className="h-[300px] pr-4">
+          {isLoading ? (
+            <p className="text-center text-muted-foreground py-8">Loading...</p>
+          ) : comments.length === 0 ? (
+            <p className="text-center text-muted-foreground py-8">No comments yet. Be the first!</p>
+          ) : (
+            <div className="space-y-4">
+              {comments.map((comment) => (
+                <div key={comment.id} className="bg-muted/50 rounded-lg p-3">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-sm font-medium">
+                      {comment.display_name || 'User'}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {format(new Date(comment.created_at), 'dd MMM, HH:mm')}
+                    </span>
+                  </div>
+                  <p className="text-sm text-foreground">{comment.content}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </ScrollArea>
+
+        <form onSubmit={handleSubmit} className="flex gap-2 pt-4 border-t">
+          <Textarea
+            placeholder="Add a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            className="min-h-[60px] resize-none"
+          />
+          <Button type="submit" size="icon" disabled={isSubmitting || !newComment.trim()}>
+            <Send className="h-4 w-4" />
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
