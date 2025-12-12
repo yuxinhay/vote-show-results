@@ -14,26 +14,28 @@ const Index = () => {
   const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
   const { painPoints, isLoading, submitPainPoint, upvote } = usePainPoints();
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, authLoading, navigate]);
+  // TEMP: Auth disabled for UI editing
+  // useEffect(() => {
+  //   if (!authLoading && !user) {
+  //     navigate('/auth');
+  //   }
+  // }, [user, authLoading, navigate]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/auth');
   };
 
-  if (authLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
-  }
+  // TEMP: Disabled for UI editing
+  // if (authLoading) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-background">
+  //       <p className="text-muted-foreground">Loading...</p>
+  //     </div>
+  //   );
+  // }
 
-  if (!user) return null;
+  // if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background py-8 px-4">
