@@ -30,7 +30,7 @@ export function PainPointCard({
   createdAt,
   onUpvote,
 }: PainPointCardProps) {
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(true); // TEMP: Open for UI editing
 
   const displayName = isAnonymous ? 'Anonymous' : submitterName;
   const initials = isAnonymous
