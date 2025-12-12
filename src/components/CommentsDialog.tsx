@@ -45,55 +45,50 @@ export function CommentsDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // TEMP: Mock comments for UI editing (bypasses RLS auth requirement)
   useEffect(() => {
     if (open && painPointId) {
-      fetchComments();
+      setIsLoading(true);
+      // Simulate loading delay
+      setTimeout(() => {
+        setComments([
+          {
+            id: '1',
+            content: 'This is a really frustrating issue. We deal with this almost every day in our department.',
+            created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+            user_id: 'user1',
+            is_anonymous: false,
+            display_name: 'Sarah Chen',
+          },
+          {
+            id: '2',
+            content: 'Agreed! Would love to see this addressed soon.',
+            created_at: new Date(Date.now() - 86400000).toISOString(),
+            user_id: 'user2',
+            is_anonymous: true,
+            display_name: 'Anonymous',
+          },
+          {
+            id: '3',
+            content: 'We tried a workaround last quarter but it only partially solved the problem. A proper fix would save us hours each week.',
+            created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
+            user_id: 'user3',
+            is_anonymous: false,
+            display_name: 'Michael Tan',
+          },
+          {
+            id: '4',
+            content: '+1 on this. Definitely a priority for our team.',
+            created_at: new Date(Date.now() - 3600000).toISOString(),
+            user_id: 'user4',
+            is_anonymous: false,
+            display_name: 'Jane Lim',
+          },
+        ]);
+        setIsLoading(false);
+      }, 300);
     }
   }, [open, painPointId]);
-
-  const fetchComments = async () => {
-    setIsLoading(true);
-    const { data: commentsData, error } = await supabase
-      .from('comments')
-      .select('id, content, created_at, user_id, is_anonymous')
-      .eq('pain_point_id', painPointId)
-      .order('created_at', { ascending: true });
-
-    if (error) {
-      console.error('Error fetching comments:', error);
-      setIsLoading(false);
-      return;
-    }
-
-    // Fetch profiles for all unique user_ids
-    const userIds = [...new Set(commentsData?.map(c => c.user_id) || [])];
-    
-    let profilesMap: Record<string, { display_name: string | null }> = {};
-    if (userIds.length > 0) {
-      const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('user_id, display_name')
-        .in('user_id', userIds);
-      
-      profilesData?.forEach(p => {
-        profilesMap[p.user_id] = { display_name: p.display_name };
-      });
-    }
-
-    // Also fetch auth user emails as fallback via the current user context
-    const commentsWithNames = (commentsData || []).map(c => {
-      if (c.is_anonymous) {
-        return { ...c, display_name: 'Anonymous' };
-      }
-      const profile = profilesMap[c.user_id];
-      // Use display_name if available, otherwise show a generic identifier
-      const name = profile?.display_name || `User ${c.user_id.slice(0, 8)}`;
-      return { ...c, display_name: name };
-    });
-
-    setComments(commentsWithNames);
-    setIsLoading(false);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,9 +109,17 @@ export function CommentsDialog({
     if (error) {
       toast.error('Failed to post comment');
     } else {
+      // TEMP: Add mock new comment for UI editing
+      setComments(prev => [...prev, {
+        id: Date.now().toString(),
+        content: newComment.trim(),
+        created_at: new Date().toISOString(),
+        user_id: 'current',
+        is_anonymous: isAnonymous,
+        display_name: isAnonymous ? 'Anonymous' : 'You',
+      }]);
       setNewComment('');
       setIsAnonymous(false);
-      fetchComments();
     }
 
     setIsSubmitting(false);
