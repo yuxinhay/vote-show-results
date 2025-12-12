@@ -39,43 +39,41 @@ export function CommentsDialog({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // TEMP: Mock comments for UI editing (bypasses RLS auth requirement)
+  const fetchComments = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('comments')
+      .select(`
+        id,
+        content,
+        created_at,
+        user_id,
+        is_anonymous,
+        profiles!inner(display_name)
+      `)
+      .eq('pain_point_id', painPointId)
+      .order('created_at', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching comments:', error);
+    } else {
+      setComments(
+        (data || []).map((c: any) => ({
+          id: c.id,
+          content: c.content,
+          created_at: c.created_at,
+          user_id: c.user_id,
+          is_anonymous: c.is_anonymous,
+          display_name: c.is_anonymous ? 'Anonymous' : c.profiles?.display_name || 'Unknown'
+        }))
+      );
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (open && painPointId) {
-      setIsLoading(true);
-      // Simulate loading delay
-      setTimeout(() => {
-        setComments([{
-          id: '1',
-          content: 'This is a really frustrating issue. We deal with this almost every day in our department.',
-          created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-          user_id: 'user1',
-          is_anonymous: false,
-          display_name: 'Sarah Chen'
-        }, {
-          id: '2',
-          content: 'Agreed! Would love to see this addressed soon.',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          user_id: 'user2',
-          is_anonymous: true,
-          display_name: 'Anonymous'
-        }, {
-          id: '3',
-          content: 'We tried a workaround last quarter but it only partially solved the problem. A proper fix would save us hours each week.',
-          created_at: new Date(Date.now() - 3600000 * 5).toISOString(),
-          user_id: 'user3',
-          is_anonymous: false,
-          display_name: 'Michael Tan'
-        }, {
-          id: '4',
-          content: '+1 on this. Definitely a priority for our team.',
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-          user_id: 'user4',
-          is_anonymous: false,
-          display_name: 'Jane Lim'
-        }]);
-        setIsLoading(false);
-      }, 300);
+      fetchComments();
     }
   }, [open, painPointId]);
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,15 +91,7 @@ export function CommentsDialog({
     if (error) {
       toast.error('Failed to post comment');
     } else {
-      // TEMP: Add mock new comment for UI editing
-      setComments(prev => [...prev, {
-        id: Date.now().toString(),
-        content: newComment.trim(),
-        created_at: new Date().toISOString(),
-        user_id: 'current',
-        is_anonymous: isAnonymous,
-        display_name: isAnonymous ? 'Anonymous' : 'You'
-      }]);
+      await fetchComments();
       setNewComment('');
       setIsAnonymous(false);
     }
