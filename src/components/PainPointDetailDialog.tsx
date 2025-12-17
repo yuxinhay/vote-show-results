@@ -74,33 +74,43 @@ export function PainPointDetailDialog({
 
   const fetchComments = async () => {
     setIsLoading(true);
-    const { data, error } = await supabase
+    
+    // Fetch comments first
+    const { data: commentsData, error: commentsError } = await supabase
       .from('comments')
-      .select(`
-        id,
-        content,
-        created_at,
-        user_id,
-        is_anonymous,
-        profiles!inner(display_name)
-      `)
+      .select('id, content, created_at, user_id, is_anonymous')
       .eq('pain_point_id', painPointId)
       .order('created_at', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching comments:', error);
-    } else {
-      setComments(
-        (data || []).map((c: any) => ({
-          id: c.id,
-          content: c.content,
-          created_at: c.created_at,
-          user_id: c.user_id,
-          is_anonymous: c.is_anonymous,
-          display_name: c.is_anonymous ? 'Anonymous' : c.profiles?.display_name || 'Unknown'
-        }))
-      );
+    if (commentsError) {
+      console.error('Error fetching comments:', commentsError);
+      setIsLoading(false);
+      return;
     }
+
+    // Get unique user_ids to fetch profiles
+    const userIds = [...new Set((commentsData || []).map(c => c.user_id))];
+    
+    // Fetch profiles separately
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('user_id, display_name')
+      .in('user_id', userIds);
+
+    const profileMap = new Map(
+      (profilesData || []).map(p => [p.user_id, p.display_name])
+    );
+
+    setComments(
+      (commentsData || []).map((c) => ({
+        id: c.id,
+        content: c.content,
+        created_at: c.created_at,
+        user_id: c.user_id,
+        is_anonymous: c.is_anonymous,
+        display_name: c.is_anonymous ? 'Anonymous' : profileMap.get(c.user_id) || 'Unknown'
+      }))
+    );
     setIsLoading(false);
   };
 
