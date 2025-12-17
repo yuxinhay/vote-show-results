@@ -85,14 +85,18 @@ export function usePainPoints() {
     setPainPoints(painPointsWithVotes);
   };
 
-  const submitPainPoint = async (title: string) => {
+  const submitPainPoint = async (title: string, challenge: string, impact: string, interestedInMIC: boolean) => {
     const { data: { user } } = await supabase.auth.getUser();
     const submitterName = user?.email || 'Unknown User';
+
+    // Combine challenge and impact into description
+    const description = `**Workplace Challenge:**\n${challenge}\n\n**Impact:**\n${impact}`;
 
     const { error } = await supabase
       .from('pain_points')
       .insert({
         title,
+        description,
         submitter_name: submitterName,
         submitter_department: null,
         is_anonymous: false,
@@ -102,6 +106,18 @@ export function usePainPoints() {
     if (error) {
       console.error('Error submitting pain point:', error);
       return false;
+    }
+
+    // If interested in MIC, also register their interest
+    if (interestedInMIC && user) {
+      await supabase
+        .from('interest_registrations')
+        .insert({
+          user_id: user.id,
+          user_email: user.email || '',
+          roles: ['Problem Statement Submitter'],
+          acknowledged_commitment: true,
+        });
     }
 
     return true;
