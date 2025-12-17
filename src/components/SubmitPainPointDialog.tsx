@@ -96,7 +96,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
             </AlertDescription>
           </Alert>
 
-          <Alert className="bg-muted/50 border-muted-foreground/20">
+          <Alert className="bg-muted/80 border-muted-foreground/30">
             <AlertDescription className="text-sm text-muted-foreground">
               <strong>Example:</strong> Staff can only submit leave applications through WOG laptops, limiting
               flexibility for those working remotely, on the move, or needing to apply for urgent leave outside office
