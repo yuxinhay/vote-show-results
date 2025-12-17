@@ -55,6 +55,7 @@ const PainPoints = () => {
                 key={pp.id}
                 id={pp.id}
                 title={pp.title}
+                description={pp.description}
                 submitterName={pp.submitter_name}
                 submitterDepartment={pp.submitter_department}
                 isAnonymous={pp.is_anonymous}
