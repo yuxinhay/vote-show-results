@@ -36,7 +36,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
   const [challenge, setChallenge] = useState("");
   const [impact, setImpact] = useState("");
   const [interestedInMIC, setInterestedInMIC] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(true); // TEMP: for UI preview
 
   useEffect(() => {
     if (showSuccessModal) {
