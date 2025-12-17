@@ -96,9 +96,11 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
             </AlertDescription>
           </Alert>
 
-          <p className="text-xs text-muted-foreground">
-            <strong>Example:</strong> Staff can only submit leave applications through WOG laptops, limiting flexibility for those working remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for laptop access. This restriction causes approval backlogs and affects workforce planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently on the move. Enabling mobile or web-based submissions would streamline the process.
-          </p>
+          <Alert className="bg-muted/50 border-muted-foreground/20">
+            <AlertDescription className="text-xs text-muted-foreground">
+              <strong>Example:</strong> Staff can only submit leave applications through WOG laptops, limiting flexibility for those working remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for laptop access. This restriction causes approval backlogs and affects workforce planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently on the move. Enabling mobile or web-based submissions would streamline the process.
+            </AlertDescription>
+          </Alert>
 
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
             <div className="space-y-2">
