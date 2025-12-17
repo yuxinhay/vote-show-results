@@ -172,8 +172,8 @@ export function PainPointDetailDialog({
           </div>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
-          <div className="space-y-4">
+        <ScrollArea className="flex-1 -mx-2 px-2">
+          <div className="space-y-4 px-1">
             {/* Description */}
             <div className="space-y-4">
               {challenge && (
@@ -203,7 +203,7 @@ export function PainPointDetailDialog({
                 {hasVoted ? 'Liked' : 'Like'}
               </Button>
               
-              <TooltipProvider>
+              <TooltipProvider delayDuration={300}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button className="text-sm text-muted-foreground hover:text-foreground hover:underline cursor-pointer">
@@ -238,7 +238,7 @@ export function PainPointDetailDialog({
                   placeholder="Add a comment..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="min-h-[60px] resize-none"
+                  className="min-h-[60px] resize-none flex-1"
                 />
                 <Button type="submit" size="icon" disabled={isSubmitting || !newComment.trim()}>
                   <Send className="h-4 w-4" />
