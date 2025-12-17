@@ -97,7 +97,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           </Alert>
 
           <Alert className="bg-muted/50 border-muted-foreground/20">
-            <AlertDescription className="text-xs text-muted-foreground">
+            <AlertDescription className="text-sm text-muted-foreground">
               <strong>Example:</strong> Staff can only submit leave applications through WOG laptops, limiting flexibility for those working remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for laptop access. This restriction causes approval backlogs and affects workforce planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently on the move. Enabling mobile or web-based submissions would streamline the process.
             </AlertDescription>
           </Alert>
@@ -139,16 +139,25 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
               />
             </div>
 
-            <div className="flex items-center space-x-2 pt-2">
+            <label
+              htmlFor="interested"
+              className="flex items-start gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors"
+            >
               <Checkbox
                 id="interested"
                 checked={interestedInMIC}
                 onCheckedChange={(checked) => setInterestedInMIC(checked as boolean)}
+                className="mt-0.5"
               />
-              <Label htmlFor="interested" className="text-sm font-normal cursor-pointer">
-                I am interested in joining MIC as part of the solutioning team.
-              </Label>
-            </div>
+              <div className="space-y-1">
+                <span className="text-sm font-medium">
+                  I am interested in joining MIC as part of the solutioning team.
+                </span>
+                <p className="text-sm text-muted-foreground italic">
+                  Express your interest to be part of the team that solves this problem.
+                </p>
+              </div>
+            </label>
 
             <div className="flex justify-end gap-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setOpen(false)}>
