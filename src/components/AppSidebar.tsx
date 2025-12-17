@@ -21,7 +21,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="border-r border-border">
       <SidebarHeader className="p-6 border-b border-border">
-        <img src={micLogo} alt="MIC" className="h-12 w-auto" />
+        <img src={micLogo} alt="MIC" className="h-12 object-contain" />
       </SidebarHeader>
 
       <SidebarContent className="p-4">
