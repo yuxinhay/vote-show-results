@@ -180,9 +180,13 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           <AlertDialogHeader className="flex flex-col items-center text-center">
             <PartyPopper className="text-primary mb-2 w-[100px] h-[100px]" />
             <AlertDialogTitle>Thank you for your submission!</AlertDialogTitle>
-            <AlertDialogDescription className="pt-2">
-              Your problem statement has been received and will be reviewed by our team before it appears on the main
-              page. This process helps ensure all submissions meet our quality guidelines.
+            <AlertDialogDescription className="pt-2 space-y-3">
+              <span className="block">
+                Your problem statement is in! We'll review it shortly to ensure it's clear and ready for the community to vote on.
+              </span>
+              <span className="block text-xs italic text-muted-foreground">
+                The MIC Programme team may reach out to you for additional information.
+              </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
