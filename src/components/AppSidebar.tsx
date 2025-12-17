@@ -21,7 +21,7 @@ const menuItems = [
 export function AppSidebar() {
   return (
     <Sidebar className="border-r border-border">
-      <SidebarHeader className="p-6 border-b border-border">
+      <SidebarHeader className="p-6 border-b border-border flex justify-center">
         <Link to="/">
           <img src={micLogo} alt="MIC" className="h-12 object-contain" />
         </Link>
