@@ -93,9 +93,6 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
                 <li>What are the operational/business implications?</li>
                 <li>What would success look like?</li>
               </ol>
-              <div className="mt-3 p-3 bg-amber-100/50 rounded-md text-xs">
-                <strong>Example:</strong> Staff can only submit leave applications through WOG laptops, limiting flexibility for those working remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for laptop access. This restriction causes approval backlogs and affects workforce planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently on the move. Enabling mobile or web-based submissions would streamline the process.
-              </div>
             </AlertDescription>
           </Alert>
 
