@@ -3,11 +3,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ThumbsUp, MessageCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { CommentsDialog } from './CommentsDialog';
+import { PainPointDetailDialog } from './PainPointDetailDialog';
 
 interface PainPointCardProps {
   id: string;
   title: string;
+  description?: string | null;
   submitterName: string;
   submitterDepartment?: string | null;
   isAnonymous?: boolean;
@@ -21,6 +22,7 @@ interface PainPointCardProps {
 export function PainPointCard({
   id,
   title,
+  description,
   submitterName,
   submitterDepartment,
   isAnonymous = false,
@@ -30,21 +32,30 @@ export function PainPointCard({
   createdAt,
   onUpvote,
 }: PainPointCardProps) {
-  const [commentsOpen, setCommentsOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   const displayName = isAnonymous ? 'Anonymous' : submitterName;
-  const initials = isAnonymous
-    ? '?'
-    : submitterName
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+
+  const handleCardClick = () => {
+    setDetailOpen(true);
+  };
+
+  const handleUpvoteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onUpvote(id);
+  };
+
+  const handleCommentClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDetailOpen(true);
+  };
 
   return (
     <>
-      <Card className="h-full flex flex-col border-l-4 border-l-primary/60 hover:shadow-md transition-shadow">
+      <Card 
+        className="h-full flex flex-col border-l-4 border-l-primary/60 hover:shadow-md transition-shadow cursor-pointer"
+        onClick={handleCardClick}
+      >
         <CardContent className="flex flex-col flex-1 p-5">
           <p className="text-xs text-muted-foreground mb-2">
             {format(new Date(createdAt), 'dd MMM yyyy')}
@@ -53,59 +64,48 @@ export function PainPointCard({
           <h3 className="font-medium text-foreground mb-3 flex-1 line-clamp-3">
             {title}
           </h3>
-          
-          <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
-            <div className="flex items-center gap-1">
-              <ThumbsUp className="h-4 w-4" />
-              <span>{voteCount}</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <MessageCircle className="h-4 w-4" />
-              <span>{commentCount}</span>
-            </div>
-          </div>
 
           <div className="flex items-center justify-between pt-3 border-t border-border">
-            <div className="flex items-center gap-3">
-              <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center text-sm font-medium">
-                {initials}
-              </div>
-              <div>
-                <p className="text-sm font-medium text-foreground">{displayName}</p>
-                {!isAnonymous && submitterDepartment && (
-                  <p className="text-xs text-muted-foreground">{submitterDepartment}</p>
-                )}
-              </div>
-            </div>
+            <p className="text-sm text-muted-foreground">{displayName}</p>
             
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setCommentsOpen(true)}
-                className="text-muted-foreground hover:text-primary"
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleCommentClick}
+                className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
               >
-                <MessageCircle className="h-5 w-5" />
-              </Button>
-              <Button
-                variant={hasVoted ? "secondary" : "ghost"}
-                size="icon"
-                onClick={() => onUpvote(id)}
+                <MessageCircle className="h-4 w-4" />
+                <span>{commentCount}</span>
+              </button>
+              <button
+                onClick={handleUpvoteClick}
                 disabled={hasVoted}
-                className={hasVoted ? "bg-orange-100 text-primary hover:bg-orange-100" : "text-muted-foreground hover:text-primary"}
+                className={`flex items-center gap-1 text-sm transition-colors ${
+                  hasVoted 
+                    ? 'text-primary' 
+                    : 'text-muted-foreground hover:text-primary'
+                }`}
               >
-                <ThumbsUp className={`h-5 w-5 ${hasVoted ? 'fill-current' : ''}`} />
-              </Button>
+                <ThumbsUp className={`h-4 w-4 ${hasVoted ? 'fill-current' : ''}`} />
+                <span>{voteCount}</span>
+              </button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <CommentsDialog
-        open={commentsOpen}
-        onOpenChange={setCommentsOpen}
+      <PainPointDetailDialog
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
         painPointId={id}
-        painPointTitle={title}
+        title={title}
+        description={description}
+        submitterName={submitterName}
+        submitterDepartment={submitterDepartment}
+        isAnonymous={isAnonymous}
+        voteCount={voteCount}
+        hasVoted={hasVoted}
+        createdAt={createdAt}
+        onUpvote={onUpvote}
       />
     </>
   );
