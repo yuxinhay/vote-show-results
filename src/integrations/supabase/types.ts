@@ -49,6 +49,33 @@ export type Database = {
           },
         ]
       }
+      interest_registrations: {
+        Row: {
+          acknowledged_commitment: boolean
+          created_at: string
+          id: string
+          roles: string[]
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          acknowledged_commitment?: boolean
+          created_at?: string
+          id?: string
+          roles: string[]
+          user_email: string
+          user_id: string
+        }
+        Update: {
+          acknowledged_commitment?: boolean
+          created_at?: string
+          id?: string
+          roles?: string[]
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       pain_points: {
         Row: {
           created_at: string
