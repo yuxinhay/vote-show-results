@@ -85,10 +85,7 @@ export function usePainPoints() {
     setPainPoints(painPointsWithVotes);
   };
 
-  const submitPainPoint = async (
-    title: string, 
-    isAnonymous?: boolean
-  ) => {
+  const submitPainPoint = async (title: string) => {
     const { data: { user } } = await supabase.auth.getUser();
     const submitterName = user?.email || 'Unknown User';
 
@@ -98,7 +95,7 @@ export function usePainPoints() {
         title,
         submitter_name: submitterName,
         submitter_department: null,
-        is_anonymous: isAnonymous || false,
+        is_anonymous: false,
         status: 'pending',
       });
 

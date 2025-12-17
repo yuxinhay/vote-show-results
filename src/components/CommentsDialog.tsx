@@ -3,8 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -35,7 +33,6 @@ export function CommentsDialog({
   } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -86,14 +83,13 @@ export function CommentsDialog({
       pain_point_id: painPointId,
       user_id: user.id,
       content: newComment.trim(),
-      is_anonymous: isAnonymous
+      is_anonymous: false
     });
     if (error) {
       toast.error('Failed to post comment');
     } else {
       await fetchComments();
       setNewComment('');
-      setIsAnonymous(false);
     }
     setIsSubmitting(false);
   };
@@ -126,12 +122,6 @@ export function CommentsDialog({
             <Button type="submit" size="icon" disabled={isSubmitting || !newComment.trim()}>
               <Send className="h-4 w-4" />
             </Button>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="anonymous-comment" checked={isAnonymous} onCheckedChange={checked => setIsAnonymous(checked === true)} />
-            <Label htmlFor="anonymous-comment" className="text-sm text-muted-foreground cursor-pointer">
-              Post anonymously
-            </Label>
           </div>
         </form>
       </DialogContent>

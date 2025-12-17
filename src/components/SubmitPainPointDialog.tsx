@@ -20,17 +20,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Plus, AlertCircle, PartyPopper } from "lucide-react";
 interface SubmitPainPointDialogProps {
-  onSubmit: (title: string, isAnonymous?: boolean) => Promise<boolean>;
+  onSubmit: (title: string) => Promise<boolean>;
 }
 export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
-  const [isAnonymous, setIsAnonymous] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
@@ -50,11 +48,10 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
       return;
     }
     setIsSubmitting(true);
-    const success = await onSubmit(title.trim(), isAnonymous);
+    const success = await onSubmit(title.trim());
     setIsSubmitting(false);
     if (success) {
       setTitle("");
-      setIsAnonymous(false);
       setOpen(false);
       setShowSuccessModal(true);
     }
@@ -98,18 +95,6 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
                 required
                 className="min-h-[120px] resize-none"
               />
-            </div>
-
-            <div
-              className={`flex items-center justify-between py-2 px-3 rounded-lg transition-colors ${isAnonymous ? "bg-green-100" : "bg-[#e8e8e8]"}`}
-            >
-              <div>
-                <Label htmlFor="anonymous" className="text-sm font-medium">
-                  Submit Anonymously
-                </Label>
-                <p className="text-xs text-muted-foreground">Your name won't be shown publicly</p>
-              </div>
-              <Switch id="anonymous" checked={isAnonymous} onCheckedChange={setIsAnonymous} />
             </div>
 
             <div className="flex justify-end gap-3 pt-4">
