@@ -98,12 +98,15 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
 
           <Alert className="bg-amber-100 border-amber-300">
             <AlertDescription className="text-sm text-amber-900">
-              <strong>Example:</strong> Staff can only submit leave applications through WOG laptops, limiting
-              flexibility for those working remotely, on the move, or needing to apply for urgent leave outside office
-              hours. Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2
-              days while waiting for laptop access. This restriction causes approval backlogs and affects workforce
-              planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently on
-              the move. Enabling mobile or web-based submissions would streamline the process.
+              <strong>An example of a problem statement</strong>
+              <p>
+                Staff can only submit leave applications through WOG laptops, limiting flexibility for those working
+                remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200
+                staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for
+                laptop access. This restriction causes approval backlogs and affects workforce planning, particularly
+                impacting the 40% of our workforce who regularly work remotely or are frequently on the move. Enabling
+                mobile or web-based submissions would streamline the process.
+              </p>
             </AlertDescription>
           </Alert>
 
@@ -117,7 +120,6 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
                 onChange={(e) => setTitle(e.target.value)}
                 required
               />
-              <p className="text-xs text-muted-foreground">Title of problem should be short but descriptive.</p>
             </div>
 
             <div className="space-y-2">
