@@ -1,9 +1,26 @@
+import { useState } from 'react';
 import { Gift, Sparkles, Users, Lightbulb, Palette, Code } from 'lucide-react';
 import govwalletLogo from '@/assets/govwallet-logo.png';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { InterestRegistrationDialog } from '@/components/InterestRegistrationDialog';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const Overview = () => {
+  const [showInterestDialog, setShowInterestDialog] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleInterestClick = () => {
+    if (!user) {
+      toast.error('Please sign in to register your interest');
+      navigate('/auth');
+      return;
+    }
+    setShowInterestDialog(true);
+  };
   const roles = [
     {
       title: 'Product Sponsor',
@@ -154,11 +171,16 @@ const Overview = () => {
         </div>
 
         <div className="pt-4">
-          <Button size="lg" className="w-full md:w-auto">
+          <Button size="lg" className="w-full md:w-auto" onClick={handleInterestClick}>
             Yes, I'm interested to be part of the solutioning team!
           </Button>
         </div>
       </section>
+
+      <InterestRegistrationDialog 
+        open={showInterestDialog} 
+        onOpenChange={setShowInterestDialog} 
+      />
 
       {/* Footer */}
       <footer className="text-center py-4 border-t border-border">
