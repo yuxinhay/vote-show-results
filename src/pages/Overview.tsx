@@ -105,7 +105,7 @@ const Overview = () => {
       {/* Main Header */}
       <section className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">The Made-in-CPF (MIC) Programme</h1>
-        <p className="text-muted-foreground text-lg tracking-tight">
+        <p className="text-muted-foreground text-lg leading-relaxed">
           The Made-in-CPF (MIC) Programme is a 10-week long intrapreneurship programme that empowers staff to prototype
           products to solve workplace challenges. Designed to accelerate innovation within the Board, MIC has
           successfully completed four seasons to date!
