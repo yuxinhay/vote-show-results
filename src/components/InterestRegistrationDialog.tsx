@@ -33,7 +33,6 @@ export function InterestRegistrationDialog({
     user
   } = useAuth();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
-  const [acknowledged, setAcknowledged] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const handleRoleToggle = (roleId: string) => {
@@ -48,10 +47,6 @@ export function InterestRegistrationDialog({
       toast.error('Please select at least one role');
       return;
     }
-    if (!acknowledged) {
-      toast.error('Please acknowledge the commitment requirement');
-      return;
-    }
     setIsSubmitting(true);
     const {
       error
@@ -59,7 +54,7 @@ export function InterestRegistrationDialog({
       user_id: user.id,
       user_email: user.email || '',
       roles: selectedRoles,
-      acknowledged_commitment: acknowledged
+      acknowledged_commitment: true
     });
     setIsSubmitting(false);
     if (error) {
@@ -71,7 +66,6 @@ export function InterestRegistrationDialog({
   };
   const handleClose = () => {
     setSelectedRoles([]);
-    setAcknowledged(false);
     setShowSuccess(false);
     onOpenChange(false);
   };
@@ -127,7 +121,7 @@ export function InterestRegistrationDialog({
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting || selectedRoles.length === 0 || !acknowledged}>
+          <Button onClick={handleSubmit} disabled={isSubmitting || selectedRoles.length === 0}>
             {isSubmitting ? 'Submitting...' : 'Submit Interest'}
           </Button>
         </DialogFooter>
