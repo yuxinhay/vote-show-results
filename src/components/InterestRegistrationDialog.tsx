@@ -110,7 +110,7 @@ export function InterestRegistrationDialog({
           <Alert className="bg-muted/50">
             <Info className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              By registering your interest, you acknowledge that participation in the MIC Programme requires a significant time commitment across 10 weeks, and you have informed your supervisor about your intention to participate.
+              By registering your interest, you acknowledge that participation in the MIC Programme requires a significant time commitment across 10 weeks, and you have informed your supervisor about your intention to participate. If you select multiple roles, your final role assignment will be subject to our decision.
             </AlertDescription>
           </Alert>
 
