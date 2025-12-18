@@ -36,6 +36,21 @@ export function PainPointCard({
 
   const displayName = isAnonymous ? 'Anonymous' : submitterName;
 
+  // Parse description to extract challenge and impact
+  const parseDescription = () => {
+    if (!description) return { challenge: null, impact: null };
+    
+    const challengeMatch = description.match(/\*\*Workplace Challenge:\*\*\n([\s\S]*?)(?=\n\n\*\*Impact:\*\*|$)/);
+    const impactMatch = description.match(/\*\*Impact:\*\*\n([\s\S]*?)$/);
+    
+    return {
+      challenge: challengeMatch ? challengeMatch[1].trim() : null,
+      impact: impactMatch ? impactMatch[1].trim() : null,
+    };
+  };
+
+  const { challenge, impact } = parseDescription();
+
   const handleCardClick = () => {
     setDetailOpen(true);
   };
@@ -61,9 +76,23 @@ export function PainPointCard({
             {format(new Date(createdAt), 'dd MMM yyyy')}
           </p>
           
-          <h3 className="font-medium text-foreground mb-3 flex-1 line-clamp-3">
+          <h3 className="font-semibold text-foreground mb-2">
             {title}
           </h3>
+
+          {challenge && (
+            <div className="mb-2">
+              <p className="text-xs font-medium text-muted-foreground mb-1">Challenge</p>
+              <p className="text-sm text-foreground/80 line-clamp-2">{challenge}</p>
+            </div>
+          )}
+
+          {impact && (
+            <div className="mb-3">
+              <p className="text-xs font-medium text-muted-foreground mb-1">Impact</p>
+              <p className="text-sm text-foreground/80 line-clamp-2">{impact}</p>
+            </div>
+          )}
 
           <div className="flex items-center justify-between pt-3 border-t border-border">
             <p className="text-sm text-muted-foreground">{displayName}</p>
