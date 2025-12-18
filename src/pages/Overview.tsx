@@ -14,12 +14,14 @@ const Overview = () => {
   const navigate = useNavigate();
 
   const handleInterestClick = () => {
-    if (!user) {
-      toast.error('Please sign in to register your interest');
-      navigate('/auth');
-      return;
-    }
-    setShowInterestDialog(true);
+    // Temporarily disabled
+    toast.info('Interest registration is temporarily unavailable');
+    // if (!user) {
+    //   toast.error('Please sign in to register your interest');
+    //   navigate('/auth');
+    //   return;
+    // }
+    // setShowInterestDialog(true);
   };
   const roles = [
     {
