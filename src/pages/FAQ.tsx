@@ -35,7 +35,7 @@ const FAQ = () => {
             <AccordionTrigger className="text-left">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground">
+            <AccordionContent className="text-secondary">
               {faq.answer}
             </AccordionContent>
           </AccordionItem>)}
