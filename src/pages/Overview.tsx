@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { Gift, Sparkles, Users, Lightbulb, Palette, Code } from "lucide-react";
-import govwalletLogo from "@/assets/govwallet-logo.png";
+import { Users, Lightbulb, Palette, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InterestRegistrationDialog } from "@/components/InterestRegistrationDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+
 const Overview = () => {
   const [showInterestDialog, setShowInterestDialog] = useState(false);
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
+  
   const handleInterestClick = () => {
     setShowInterestDialog(true);
   };
+  
   const roles = [{
     title: "Product Sponsor",
     icon: Users,
@@ -33,6 +33,7 @@ const Overview = () => {
     icon: Code,
     responsibilities: ["Build prototype based on requirements from Sponsor and team findings", "Understand and incorporate considerations on cloud services, required integrations, data security, etc."]
   }];
+  
   const contributions = [{
     title: "Submit a Problem Statement",
     description: "See a workplace challenge worth solving? Submit your problem statement – that's the crucial first step. Think about the daily friction points, manual processes that eat up time, information scattered across multiple systems, or tasks that require endless back-and-forth. If you're excited about being part of the solution, we'd love to have you join the team to bring your idea to life! Your contribution could transform how we work at CPFB."
@@ -46,23 +47,9 @@ const Overview = () => {
     title: "Support the MIC Programme",
     description: "Even if you're not directly involved in a MIC product team, you can still be part of MIC. Attend Pitch Day and Demo Day to see what's being built and stay connected to innovation happening across the board. You can also provide feedback on the teams' prototypes and champion the innovative spirit within your department!"
   }];
-  return <div className="p-8 space-y-10 max-w-5xl mx-auto">
-      {/* Incentive Banner */}
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-rose-500 via-red-500 to-orange-500 p-4 shadow-lg">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-30"></div>
-        <div className="relative flex flex-col md:flex-row items-center justify-center gap-4 text-white">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 animate-pulse" />
-            <span className="text-lg font-bold">Win $10</span>
-          </div>
-          <img src={govwalletLogo} alt="GovWallet" className="h-8 bg-white rounded px-2 py-1" />
-          <p className="text-center md:text-left font-medium">
-            Submit your problem statement or upvote to stand a chance to win!
-          </p>
-          <Gift className="h-6 w-6 hidden md:block" />
-        </div>
-      </div>
-
+  
+  return (
+    <div className="p-8 space-y-10 max-w-5xl mx-auto">
       {/* Main Header */}
       <section className="space-y-4">
         <h1 className="text-3xl font-bold tracking-tight">The Made-in-CPF (MIC) Programme</h1>
@@ -94,7 +81,8 @@ const Overview = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {roles.map(role => <Card key={role.title} className="border-border">
+          {roles.map(role => (
+            <Card key={role.title} className="border-border">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <role.icon className="h-5 w-5 text-primary" />
@@ -103,13 +91,16 @@ const Overview = () => {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  {role.responsibilities.map((resp, index) => <li key={index} className="flex gap-2">
+                  {role.responsibilities.map((resp, index) => (
+                    <li key={index} className="flex gap-2">
                       <span className="text-primary font-medium">{String.fromCharCode(97 + index)}.</span>
                       <span className="text-foreground">{resp}</span>
-                    </li>)}
+                    </li>
+                  ))}
                 </ul>
               </CardContent>
-            </Card>)}
+            </Card>
+          ))}
         </div>
       </section>
 
@@ -118,10 +109,12 @@ const Overview = () => {
         <h2 className="text-2xl font-semibold">How can you contribute to MIC?</h2>
 
         <div className="space-y-6">
-          {contributions.map(item => <div key={item.title} className="space-y-2">
+          {contributions.map(item => (
+            <div key={item.title} className="space-y-2">
               <h3 className="text-lg font-medium">{item.title}</h3>
               <p className="leading-relaxed text-foreground">{item.description}</p>
-            </div>)}
+            </div>
+          ))}
         </div>
 
         <div className="pt-4">
@@ -140,6 +133,8 @@ const Overview = () => {
           announced in January 2026.
         </p>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Overview;
