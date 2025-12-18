@@ -14,11 +14,6 @@ const Overview = () => {
   } = useAuth();
   const navigate = useNavigate();
   const handleInterestClick = () => {
-    if (!user) {
-      toast.error("Please sign in to register your interest");
-      navigate("/auth");
-      return;
-    }
     setShowInterestDialog(true);
   };
   const roles = [{
