@@ -65,6 +65,7 @@ export function PainPointDetailDialog({
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   const displayName = isAnonymous ? 'Anonymous' : submitterName;
 
@@ -117,6 +118,9 @@ export function PainPointDetailDialog({
   useEffect(() => {
     if (open && painPointId) {
       fetchComments();
+    }
+    if (!open) {
+      setIsTooltipOpen(false);
     }
   }, [open, painPointId]);
 
@@ -204,9 +208,13 @@ export function PainPointDetailDialog({
               </Button>
               
               <TooltipProvider delayDuration={300}>
-                <Tooltip>
+                <Tooltip open={isTooltipOpen}>
                   <TooltipTrigger asChild>
-                    <button className="text-sm text-muted-foreground hover:text-foreground hover:underline cursor-pointer">
+                    <button 
+                      className="text-sm text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
+                      onMouseEnter={() => setIsTooltipOpen(true)}
+                      onMouseLeave={() => setIsTooltipOpen(false)}
+                    >
                       {voteCount} {voteCount === 1 ? 'like' : 'likes'}
                     </button>
                   </TooltipTrigger>
