@@ -24,7 +24,6 @@ interface InterestRegistration {
   id: string;
   user_email: string;
   roles: string[];
-  acknowledged_commitment: boolean;
   created_at: string;
 }
 
@@ -36,11 +35,10 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const downloadCSV = (registrations: InterestRegistration[]) => {
-  const headers = ['Email', 'Roles', 'Acknowledged Commitment', 'Registered At'];
+  const headers = ['Email', 'Roles', 'Registered At'];
   const rows = registrations.map(reg => [
     reg.user_email,
     reg.roles.map(r => ROLE_LABELS[r] || r).join('; '),
-    reg.acknowledged_commitment ? 'Yes' : 'No',
     format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')
   ]);
   
@@ -400,13 +398,7 @@ const Admin = () => {
                                 </Badge>
                               ))}
                             </div>
-                          </div>
-                          {reg.acknowledged_commitment && (
-                            <Badge variant="outline" className="text-green-600 border-green-600">
-                              <Check className="h-3 w-3 mr-1" />
-                              Acknowledged
-                            </Badge>
-                          )}
+                        </div>
                         </div>
                       </CardContent>
                     </Card>

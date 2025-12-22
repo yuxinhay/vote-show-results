@@ -53,8 +53,7 @@ export function InterestRegistrationDialog({
     } = await supabase.from('interest_registrations').insert({
       user_id: user.id,
       user_email: user.email || '',
-      roles: selectedRoles,
-      acknowledged_commitment: true
+      roles: selectedRoles
     });
     setIsSubmitting(false);
     if (error) {

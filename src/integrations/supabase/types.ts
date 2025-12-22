@@ -51,7 +51,6 @@ export type Database = {
       }
       interest_registrations: {
         Row: {
-          acknowledged_commitment: boolean
           created_at: string
           id: string
           roles: string[]
@@ -59,7 +58,6 @@ export type Database = {
           user_id: string
         }
         Insert: {
-          acknowledged_commitment?: boolean
           created_at?: string
           id?: string
           roles: string[]
@@ -67,7 +65,6 @@ export type Database = {
           user_id: string
         }
         Update: {
-          acknowledged_commitment?: boolean
           created_at?: string
           id?: string
           roles?: string[]
