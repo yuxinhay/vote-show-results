@@ -54,6 +54,7 @@ export type Database = {
           created_at: string
           id: string
           roles: string[]
+          supervisor_email: string | null
           user_email: string
           user_id: string
         }
@@ -61,6 +62,7 @@ export type Database = {
           created_at?: string
           id?: string
           roles: string[]
+          supervisor_email?: string | null
           user_email: string
           user_id: string
         }
@@ -68,6 +70,7 @@ export type Database = {
           created_at?: string
           id?: string
           roles?: string[]
+          supervisor_email?: string | null
           user_email?: string
           user_id?: string
         }
