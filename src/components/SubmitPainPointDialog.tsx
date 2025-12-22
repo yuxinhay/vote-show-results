@@ -16,6 +16,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogAction,
+  AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,6 +38,30 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
   const [impact, setImpact] = useState("");
   const [interestedInMIC, setInterestedInMIC] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const hasInput = title.trim() || challenge.trim() || impact.trim() || interestedInMIC;
+
+  const clearForm = () => {
+    setTitle("");
+    setChallenge("");
+    setImpact("");
+    setInterestedInMIC(false);
+  };
+
+  const handleCancel = () => {
+    if (hasInput) {
+      setShowCancelConfirm(true);
+    } else {
+      setOpen(false);
+    }
+  };
+
+  const confirmCancel = () => {
+    clearForm();
+    setShowCancelConfirm(false);
+    setOpen(false);
+  };
 
   useEffect(() => {
     if (showSuccessModal) {
@@ -59,10 +84,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
     const success = await onSubmit(title.trim(), challenge.trim(), impact.trim(), interestedInMIC);
     setIsSubmitting(false);
     if (success) {
-      setTitle("");
-      setChallenge("");
-      setImpact("");
-      setInterestedInMIC(false);
+      clearForm();
       setOpen(false);
       setShowSuccessModal(true);
     }
@@ -162,7 +184,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
             </label>
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button type="button" variant="outline" onClick={handleCancel}>
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting || !title.trim() || !challenge.trim() || !impact.trim()}>
@@ -173,6 +195,23 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
         </DialogContent>
       </Dialog>
 
+      {/* Cancel Confirmation Dialog */}
+      <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel submission?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to cancel? All your inputs will be cleared.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Continue editing</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmCancel}>Yes, cancel</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Success Modal */}
       <AlertDialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
         <AlertDialogContent>
           <AlertDialogHeader className="flex flex-col items-center text-center">
