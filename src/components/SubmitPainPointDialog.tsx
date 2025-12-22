@@ -103,8 +103,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
                 remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200
                 staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for
                 laptop access. This restriction causes approval backlogs and affects workforce planning, particularly
-                impacting the 40% of our workforce who regularly work remotely or are frequently on the move. Enabling
-                mobile or web-based submissions would streamline the process.
+                impacting the 40% of our workforce who regularly work remotely or are frequently on the move.
               </p>
             </AlertDescription>
           </Alert>
@@ -137,7 +136,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
               <Label htmlFor="impact">Impact of your problem *</Label>
               <Textarea
                 id="impact"
-                placeholder="Describe who is affected, operational implications, and what success would look like..."
+                placeholder="Describe who is affected, and any operational implications..."
                 value={impact}
                 onChange={(e) => setImpact(e.target.value)}
                 required
