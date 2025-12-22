@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info, PartyPopper } from "lucide-react";
 interface InterestRegistrationDialogProps {
@@ -40,6 +41,7 @@ const ROLES = [
 export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegistrationDialogProps) {
   const { user } = useAuth();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [supervisorEmail, setSupervisorEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const handleRoleToggle = (roleId: string) => {
@@ -59,7 +61,7 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
       user_id: user.id,
       user_email: user.email || "",
       roles: selectedRoles,
-      acknowledged_commitment: true,
+      supervisor_email: supervisorEmail.trim() || null,
     });
     setIsSubmitting(false);
     if (error) {
@@ -71,6 +73,7 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
   };
   const handleClose = () => {
     setSelectedRoles([]);
+    setSupervisorEmail("");
     setShowSuccess(false);
     onOpenChange(false);
   };
@@ -118,6 +121,19 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
                 </Label>
               </div>
             ))}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="supervisor-email" className="text-sm font-medium">
+              Direct Supervisor's CPF Email Address
+            </Label>
+            <Input
+              id="supervisor-email"
+              type="email"
+              placeholder="supervisor@cpf.gov.sg"
+              value={supervisorEmail}
+              onChange={(e) => setSupervisorEmail(e.target.value)}
+            />
           </div>
 
           <Alert className="bg-muted/50">
