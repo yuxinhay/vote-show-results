@@ -42,21 +42,25 @@ const Admin = () => {
   const [interestRegistrations, setInterestRegistrations] = useState<InterestRegistration[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
+  // TODO: TEMPORARY - Remove this bypass after testing
+  const bypassAuth = true;
+
   useEffect(() => {
+    if (bypassAuth) return; // Skip auth checks
     if (!isLoading && !user) {
       navigate('/auth');
     } else if (!isLoading && !isAdmin) {
       toast.error('Access denied. Admin only.');
       navigate('/');
     }
-  }, [user, isAdmin, isLoading, navigate]);
+  }, [user, isAdmin, isLoading, navigate, bypassAuth]);
 
   useEffect(() => {
-    if (isAdmin) {
+    if (bypassAuth || isAdmin) {
       fetchPainPoints();
       fetchInterestRegistrations();
     }
-  }, [isAdmin]);
+  }, [isAdmin, bypassAuth]);
 
   const fetchPainPoints = async () => {
     const { data, error } = await supabase
@@ -117,7 +121,9 @@ const Admin = () => {
     fetchPainPoints();
   };
 
-  if (isLoading || !isAdmin) {
+  // TODO: TEMPORARY - Remove bypass check after testing
+  const bypassAuthCheck = true;
+  if (!bypassAuthCheck && (isLoading || !isAdmin)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-muted-foreground">Loading...</p>
