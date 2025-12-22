@@ -9,7 +9,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { Send, ThumbsUp } from 'lucide-react';
-
 interface Comment {
   id: string;
   content: string;
@@ -20,17 +19,7 @@ interface Comment {
 }
 
 // Mock data for who liked - in real app this would come from database
-const MOCK_LIKERS = [
-  'John Tan',
-  'Sarah Lee',
-  'Michael Wong',
-  'Emily Chen',
-  'David Lim',
-  'Jessica Ng',
-  'Kevin Goh',
-  'Amanda Teo',
-];
-
+const MOCK_LIKERS = ['John Tan', 'Sarah Lee', 'Michael Wong', 'Emily Chen', 'David Lim', 'Jessica Ng', 'Kevin Goh', 'Amanda Teo'];
 interface PainPointDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -45,7 +34,6 @@ interface PainPointDetailDialogProps {
   createdAt: string;
   onUpvote: (id: string) => void;
 }
-
 export function PainPointDetailDialog({
   open,
   onOpenChange,
@@ -58,31 +46,31 @@ export function PainPointDetailDialog({
   voteCount,
   hasVoted,
   createdAt,
-  onUpvote,
+  onUpvote
 }: PainPointDetailDialogProps) {
-  const { user } = useAuth();
+  const {
+    user
+  } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
-
   const displayName = isAnonymous ? 'Anonymous' : submitterName;
 
   // Generate mock likers based on vote count
   const likers = MOCK_LIKERS.slice(0, Math.min(voteCount, MOCK_LIKERS.length));
   const extraLikers = voteCount > MOCK_LIKERS.length ? voteCount - MOCK_LIKERS.length : 0;
-
   const fetchComments = async () => {
     setIsLoading(true);
-    
-    // Fetch comments first
-    const { data: commentsData, error: commentsError } = await supabase
-      .from('comments')
-      .select('id, content, created_at, user_id, is_anonymous')
-      .eq('pain_point_id', painPointId)
-      .order('created_at', { ascending: true });
 
+    // Fetch comments first
+    const {
+      data: commentsData,
+      error: commentsError
+    } = await supabase.from('comments').select('id, content, created_at, user_id, is_anonymous').eq('pain_point_id', painPointId).order('created_at', {
+      ascending: true
+    });
     if (commentsError) {
       console.error('Error fetching comments:', commentsError);
       setIsLoading(false);
@@ -91,30 +79,22 @@ export function PainPointDetailDialog({
 
     // Get unique user_ids to fetch profiles
     const userIds = [...new Set((commentsData || []).map(c => c.user_id))];
-    
+
     // Fetch profiles separately
-    const { data: profilesData } = await supabase
-      .from('profiles')
-      .select('user_id, display_name')
-      .in('user_id', userIds);
-
-    const profileMap = new Map(
-      (profilesData || []).map(p => [p.user_id, p.display_name])
-    );
-
-    setComments(
-      (commentsData || []).map((c) => ({
-        id: c.id,
-        content: c.content,
-        created_at: c.created_at,
-        user_id: c.user_id,
-        is_anonymous: c.is_anonymous,
-        display_name: c.is_anonymous ? 'Anonymous' : profileMap.get(c.user_id) || 'Unknown'
-      }))
-    );
+    const {
+      data: profilesData
+    } = await supabase.from('profiles').select('user_id, display_name').in('user_id', userIds);
+    const profileMap = new Map((profilesData || []).map(p => [p.user_id, p.display_name]));
+    setComments((commentsData || []).map(c => ({
+      id: c.id,
+      content: c.content,
+      created_at: c.created_at,
+      user_id: c.user_id,
+      is_anonymous: c.is_anonymous,
+      display_name: c.is_anonymous ? 'Anonymous' : profileMap.get(c.user_id) || 'Unknown'
+    })));
     setIsLoading(false);
   };
-
   useEffect(() => {
     if (open && painPointId) {
       fetchComments();
@@ -123,12 +103,13 @@ export function PainPointDetailDialog({
       setIsTooltipOpen(false);
     }
   }, [open, painPointId]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim() || !user) return;
     setIsSubmitting(true);
-    const { error } = await supabase.from('comments').insert({
+    const {
+      error
+    } = await supabase.from('comments').insert({
       pain_point_id: painPointId,
       user_id: user.id,
       content: newComment.trim(),
@@ -145,32 +126,31 @@ export function PainPointDetailDialog({
 
   // Parse description to extract challenge and impact
   const parseDescription = (desc: string | null) => {
-    if (!desc) return { challenge: '', impact: '' };
-    
+    if (!desc) return {
+      challenge: '',
+      impact: ''
+    };
     const challengeMatch = desc.match(/\*\*Workplace Challenge:\*\*\n([\s\S]*?)(?=\n\n\*\*Impact:|$)/);
     const impactMatch = desc.match(/\*\*Impact:\*\*\n([\s\S]*?)$/);
-    
     return {
       challenge: challengeMatch ? challengeMatch[1].trim() : desc,
       impact: impactMatch ? impactMatch[1].trim() : ''
     };
   };
-
-  const { challenge, impact } = parseDescription(description);
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+  const {
+    challenge,
+    impact
+  } = parseDescription(description);
+  return <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold pr-8">{title}</DialogTitle>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>{displayName}</span>
-            {!isAnonymous && submitterDepartment && (
-              <>
+            {!isAnonymous && submitterDepartment && <>
                 <span>•</span>
                 <span>{submitterDepartment}</span>
-              </>
-            )}
+              </>}
             <span>•</span>
             <span>{format(new Date(createdAt), 'dd MMM yyyy')}</span>
           </div>
@@ -180,29 +160,19 @@ export function PainPointDetailDialog({
           <div className="space-y-4 px-1">
             {/* Description */}
             <div className="space-y-4">
-              {challenge && (
-                <div>
-                  <h4 className="font-medium text-sm text-muted-foreground mb-1">Workplace Challenge</h4>
+              {challenge && <div>
+                  <h4 className="text-sm mb-1 font-bold text-sidebar-accent">Workplace Challenge</h4>
                   <p className="text-foreground whitespace-pre-wrap">{challenge}</p>
-                </div>
-              )}
-              {impact && (
-                <div>
+                </div>}
+              {impact && <div>
                   <h4 className="font-medium text-sm text-muted-foreground mb-1">Impact</h4>
                   <p className="text-foreground whitespace-pre-wrap">{impact}</p>
-                </div>
-              )}
+                </div>}
             </div>
 
             {/* Likes section */}
             <div className="flex items-center gap-2 pt-2">
-              <Button
-                variant={hasVoted ? "secondary" : "outline"}
-                size="sm"
-                onClick={() => onUpvote(painPointId)}
-                disabled={hasVoted}
-                className={hasVoted ? "bg-orange-100 text-primary hover:bg-orange-100" : ""}
-              >
+              <Button variant={hasVoted ? "secondary" : "outline"} size="sm" onClick={() => onUpvote(painPointId)} disabled={hasVoted} className={hasVoted ? "bg-orange-100 text-primary hover:bg-orange-100" : ""}>
                 <ThumbsUp className={`h-4 w-4 mr-1 ${hasVoted ? 'fill-current' : ''}`} />
                 {hasVoted ? 'Liked' : 'Like'}
               </Button>
@@ -210,30 +180,18 @@ export function PainPointDetailDialog({
               <TooltipProvider delayDuration={300}>
                 <Tooltip open={isTooltipOpen}>
                   <TooltipTrigger asChild>
-                    <button 
-                      className="text-sm text-muted-foreground hover:text-foreground hover:underline cursor-pointer"
-                      onMouseEnter={() => setIsTooltipOpen(true)}
-                      onMouseLeave={() => setIsTooltipOpen(false)}
-                    >
+                    <button className="text-sm text-muted-foreground hover:text-foreground hover:underline cursor-pointer" onMouseEnter={() => setIsTooltipOpen(true)} onMouseLeave={() => setIsTooltipOpen(false)}>
                       {voteCount} {voteCount === 1 ? 'like' : 'likes'}
                     </button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom" className="max-w-xs">
-                    {voteCount === 0 ? (
-                      <p className="text-sm">No likes yet</p>
-                    ) : (
-                      <div className="text-sm">
+                    {voteCount === 0 ? <p className="text-sm">No likes yet</p> : <div className="text-sm">
                         <p className="font-medium mb-1">Liked by:</p>
                         <ul className="list-none">
-                          {likers.map((name, i) => (
-                            <li key={i}>{name}</li>
-                          ))}
-                          {extraLikers > 0 && (
-                            <li className="text-muted-foreground">and {extraLikers} more...</li>
-                          )}
+                          {likers.map((name, i) => <li key={i}>{name}</li>)}
+                          {extraLikers > 0 && <li className="text-muted-foreground">and {extraLikers} more...</li>}
                         </ul>
-                      </div>
-                    )}
+                      </div>}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -242,12 +200,7 @@ export function PainPointDetailDialog({
             {/* Comment input */}
             <form onSubmit={handleSubmit} className="pt-4 border-t">
               <div className="flex gap-2">
-                <Textarea
-                  placeholder="Add a comment..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  className="min-h-[60px] resize-none flex-1"
-                />
+                <Textarea placeholder="Add a comment..." value={newComment} onChange={e => setNewComment(e.target.value)} className="min-h-[60px] resize-none flex-1" />
                 <Button type="submit" size="icon" disabled={isSubmitting || !newComment.trim()}>
                   <Send className="h-4 w-4" />
                 </Button>
@@ -259,14 +212,8 @@ export function PainPointDetailDialog({
               <h4 className="font-medium text-sm text-muted-foreground">
                 Comments ({comments.length})
               </h4>
-              {isLoading ? (
-                <p className="text-center text-muted-foreground py-4">Loading...</p>
-              ) : comments.length === 0 ? (
-                <p className="text-center text-muted-foreground py-4">No comments yet. Be the first!</p>
-              ) : (
-                <div className="space-y-3">
-                  {comments.map((comment) => (
-                    <div key={comment.id} className="rounded-lg p-3 bg-muted">
+              {isLoading ? <p className="text-center text-muted-foreground py-4">Loading...</p> : comments.length === 0 ? <p className="text-center text-muted-foreground py-4">No comments yet. Be the first!</p> : <div className="space-y-3">
+                  {comments.map(comment => <div key={comment.id} className="rounded-lg p-3 bg-muted">
                       <div className="flex items-center justify-between mb-1">
                         <span className="text-sm font-medium">{comment.display_name}</span>
                         <span className="text-xs text-muted-foreground">
@@ -274,14 +221,11 @@ export function PainPointDetailDialog({
                         </span>
                       </div>
                       <p className="text-sm text-foreground">{comment.content}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
+                    </div>)}
+                </div>}
             </div>
           </div>
         </ScrollArea>
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 }
