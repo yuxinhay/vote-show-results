@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Check, X, ArrowLeft, User, Users } from 'lucide-react';
+import { Check, X, ArrowLeft, User, Users, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
@@ -33,6 +33,28 @@ const ROLE_LABELS: Record<string, string> = {
   hustler: 'Hustler (PM)',
   hipster: 'Hipster (Designer)',
   hacker: 'Hacker (Developer)',
+};
+
+const downloadCSV = (registrations: InterestRegistration[]) => {
+  const headers = ['Email', 'Roles', 'Acknowledged Commitment', 'Registered At'];
+  const rows = registrations.map(reg => [
+    reg.user_email,
+    reg.roles.map(r => ROLE_LABELS[r] || r).join('; '),
+    reg.acknowledged_commitment ? 'Yes' : 'No',
+    format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')
+  ]);
+  
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `interest-registrations-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
 };
 
 const Admin = () => {
@@ -344,7 +366,19 @@ const Admin = () => {
 
           <TabsContent value="interests" className="mt-6">
             <section>
-              <h2 className="text-lg font-semibold mb-4">Registered Interest Parties</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Registered Interest Parties</h2>
+                {interestRegistrations.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => downloadCSV(interestRegistrations)}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download CSV
+                  </Button>
+                )}
+              </div>
               
               {interestRegistrations.length === 0 ? (
                 <p className="text-muted-foreground py-8 text-center">No interest registrations yet</p>
