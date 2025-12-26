@@ -142,7 +142,7 @@ const Overview = () => {
           <p className="leading-relaxed text-foreground">{contributions[2].description}</p>
           <div className="pt-2">
             <Button size="lg" className="w-full md:w-auto" onClick={handleInterestClick}>
-              Yes, I'm interested to be part of the solutioning team!
+              I'm interested to be a MIC participant!
             </Button>
           </div>
         </div>
