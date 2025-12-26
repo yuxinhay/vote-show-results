@@ -124,23 +124,31 @@ const Overview = () => {
       <section className="space-y-6">
         <h2 className="text-2xl font-semibold">How can you contribute to MIC?</h2>
 
-        <div className="space-y-6">
-          {contributions.map(item => (
-            <div key={item.title} className="space-y-2">
-              <h3 className="text-lg font-medium">{item.title}</h3>
-              <p className="leading-relaxed text-foreground">{item.description}</p>
-            </div>
-          ))}
+        {/* Submit a Problem Statement */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">{contributions[0].title}</h3>
+          <p className="leading-relaxed text-foreground">{contributions[0].description}</p>
         </div>
 
-        <div className="pt-4">
-          <Button size="lg" className="w-full md:w-auto" onClick={handleInterestClick}>
-            Yes, I'm interested to be part of the solutioning team!
-          </Button>
+        {/* Vote for Problem Statements */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">{contributions[1].title}</h3>
+          <p className="leading-relaxed text-foreground">{contributions[1].description}</p>
+        </div>
+
+        {/* Join as a MIC Participant */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">{contributions[2].title}</h3>
+          <p className="leading-relaxed text-foreground">{contributions[2].description}</p>
+          <div className="pt-2">
+            <Button size="lg" className="w-full md:w-auto" onClick={handleInterestClick}>
+              Yes, I'm interested to be part of the solutioning team!
+            </Button>
+          </div>
         </div>
 
         {/* Join as a MIC Coach */}
-        <div className="space-y-2 pt-4">
+        <div className="space-y-2">
           <h3 className="text-lg font-medium">Join as a MIC Coach</h3>
           <p className="leading-relaxed text-foreground">
             Support innovation by becoming a MIC coach. Coaches play a vital role in guiding product teams through their MIC journey, helping them navigate challenges, refine their ideas, and stay on track to deliver impactful solutions. If you have experience in project management, or simply a passion for mentoring others, consider joining as a coach to help shape the next generation of innovators at CPFB.
@@ -150,6 +158,12 @@ const Overview = () => {
               I'm interested to be a MIC Coach!
             </Button>
           </div>
+        </div>
+
+        {/* Support the MIC Programme */}
+        <div className="space-y-2">
+          <h3 className="text-lg font-medium">{contributions[3].title}</h3>
+          <p className="leading-relaxed text-foreground">{contributions[3].description}</p>
         </div>
       </section>
 
