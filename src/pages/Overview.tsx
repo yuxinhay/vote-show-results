@@ -183,14 +183,6 @@ const Overview = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Footer */}
-      <footer className="text-center py-4 border-t border-border">
-        <p className="text-sm text-gray-600">
-          Submissions close on <span className="font-semibold text-foreground">31 December 2025</span>. Winners will be
-          announced in January 2026.
-        </p>
-      </footer>
     </div>
   );
 };
