@@ -138,18 +138,18 @@ const Overview = () => {
             Yes, I'm interested to be part of the solutioning team!
           </Button>
         </div>
-      </section>
 
-      {/* Join as a MIC Coach */}
-      <section className="space-y-4">
-        <h2 className="text-2xl font-semibold">Join as a MIC Coach</h2>
-        <p className="leading-relaxed text-foreground">
-          Support innovation by becoming a MIC coach. Coaches play a vital role in guiding product teams through their MIC journey, helping them navigate challenges, refine their ideas, and stay on track to deliver impactful solutions. If you have experience in project management, or simply a passion for mentoring others, consider joining as a coach to help shape the next generation of innovators at CPFB.
-        </p>
-        <div className="pt-2">
-          <Button size="lg" className="w-full md:w-auto" onClick={() => setShowCoachDialog(true)}>
-            I'm interested to be a MIC Coach!
-          </Button>
+        {/* Join as a MIC Coach */}
+        <div className="space-y-2 pt-4">
+          <h3 className="text-lg font-medium">Join as a MIC Coach</h3>
+          <p className="leading-relaxed text-foreground">
+            Support innovation by becoming a MIC coach. Coaches play a vital role in guiding product teams through their MIC journey, helping them navigate challenges, refine their ideas, and stay on track to deliver impactful solutions. If you have experience in project management, or simply a passion for mentoring others, consider joining as a coach to help shape the next generation of innovators at CPFB.
+          </p>
+          <div className="pt-2">
+            <Button size="lg" className="w-full md:w-auto" onClick={() => setShowCoachDialog(true)}>
+              I'm interested to be a MIC Coach!
+            </Button>
+          </div>
         </div>
       </section>
 
