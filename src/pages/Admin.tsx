@@ -64,10 +64,10 @@ const Admin = () => {
 
   useEffect(() => {
     if (!isLoading && !user) {
-      navigate('/auth');
-    } else if (!isLoading && !isAdmin) {
+      navigate('/auth', { replace: true });
+    } else if (!isLoading && user && !isAdmin) {
       toast.error('Access denied. Admin only.');
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [user, isAdmin, isLoading, navigate]);
 
@@ -137,10 +137,20 @@ const Admin = () => {
     fetchPainPoints();
   };
 
-  if (isLoading || !isAdmin) {
+  // Show loading while auth state is being determined
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-muted-foreground">Loading...</p>
+      </div>
+    );
+  }
+
+  // Block access if not authenticated or not admin
+  if (!user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-muted-foreground">Redirecting...</p>
       </div>
     );
   }
