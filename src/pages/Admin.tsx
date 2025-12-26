@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,26 +56,14 @@ const downloadCSV = (registrations: InterestRegistration[]) => {
 
 const Admin = () => {
   const navigate = useNavigate();
-  const { user, isAdmin, isLoading } = useAuth();
   const [painPoints, setPainPoints] = useState<PendingPainPoint[]>([]);
   const [interestRegistrations, setInterestRegistrations] = useState<InterestRegistration[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate('/auth', { replace: true });
-    } else if (!isLoading && user && !isAdmin) {
-      toast.error('Access denied. Admin only.');
-      navigate('/', { replace: true });
-    }
-  }, [user, isAdmin, isLoading, navigate]);
-
-  useEffect(() => {
-    if (isAdmin) {
-      fetchPainPoints();
-      fetchInterestRegistrations();
-    }
-  }, [isAdmin]);
+    fetchPainPoints();
+    fetchInterestRegistrations();
+  }, []);
 
   const fetchPainPoints = async () => {
     const { data, error } = await supabase
@@ -137,20 +124,11 @@ const Admin = () => {
     fetchPainPoints();
   };
 
-  // Show loading while auth state is being determined
-  if (isLoading) {
+  // Show loading while data is being fetched
+  if (isLoadingData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
-  }
-
-  // Block access if not authenticated or not admin
-  if (!user || !isAdmin) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Redirecting...</p>
       </div>
     );
   }
