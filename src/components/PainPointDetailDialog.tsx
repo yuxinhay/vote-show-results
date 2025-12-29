@@ -165,7 +165,7 @@ export function PainPointDetailDialog({
                   <p className="text-foreground whitespace-pre-wrap">{challenge}</p>
                 </div>}
               {impact && <div>
-                  <h4 className="text-sm mb-1 font-bold text-sidebar-accent">Impact</h4>
+                  <h4 className="text-sm mb-1 font-bold text-sidebar-accent">Impact of Problem</h4>
                   <p className="text-foreground whitespace-pre-wrap">{impact}</p>
                 </div>}
             </div>
