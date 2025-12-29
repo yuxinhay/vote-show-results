@@ -23,6 +23,8 @@ interface InterestRegistration {
   id: string;
   user_email: string;
   roles: string[];
+  supervisor_email: string | null;
+  registration_type: string;
   created_at: string;
 }
 
@@ -31,13 +33,16 @@ const ROLE_LABELS: Record<string, string> = {
   hustler: 'Hustler (PM)',
   hipster: 'Hipster (Designer)',
   hacker: 'Hacker (Developer)',
+  coach: 'Coach',
 };
 
-const downloadCSV = (registrations: InterestRegistration[]) => {
-  const headers = ['Email', 'Roles', 'Registered At'];
-  const rows = registrations.map(reg => [
+const downloadParticipantCSV = (registrations: InterestRegistration[]) => {
+  const participantRegs = registrations.filter(r => r.registration_type === 'participant');
+  const headers = ['Email', 'Roles', 'Supervisor Email', 'Registered At'];
+  const rows = participantRegs.map(reg => [
     reg.user_email,
     reg.roles.map(r => ROLE_LABELS[r] || r).join('; '),
+    reg.supervisor_email || '',
     format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')
   ]);
   
@@ -49,7 +54,29 @@ const downloadCSV = (registrations: InterestRegistration[]) => {
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);
-  link.download = `interest-registrations-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  link.download = `participant-registrations-${format(new Date(), 'yyyy-MM-dd')}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+};
+
+const downloadCoachCSV = (registrations: InterestRegistration[]) => {
+  const coachRegs = registrations.filter(r => r.registration_type === 'coach');
+  const headers = ['Email', 'Supervisor Email', 'Registered At'];
+  const rows = coachRegs.map(reg => [
+    reg.user_email,
+    reg.supervisor_email || '',
+    format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')
+  ]);
+  
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+  ].join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = `coach-registrations-${format(new Date(), 'yyyy-MM-dd')}.csv`;
   link.click();
   URL.revokeObjectURL(link.href);
 };
@@ -344,15 +371,21 @@ const Admin = () => {
             </section>
           </TabsContent>
 
-          <TabsContent value="interests" className="mt-6">
+          <TabsContent value="interests" className="mt-6 space-y-8">
+            {/* Participants Section */}
             <section>
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Registered Interest Parties</h2>
-                {interestRegistrations.length > 0 && (
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  MIC Participants
+                  <Badge variant="secondary">
+                    {interestRegistrations.filter(r => r.registration_type === 'participant').length}
+                  </Badge>
+                </h2>
+                {interestRegistrations.filter(r => r.registration_type === 'participant').length > 0 && (
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => downloadCSV(interestRegistrations)}
+                    onClick={() => downloadParticipantCSV(interestRegistrations)}
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Download CSV
@@ -360,31 +393,88 @@ const Admin = () => {
                 )}
               </div>
               
-              {interestRegistrations.length === 0 ? (
-                <p className="text-muted-foreground py-8 text-center">No interest registrations yet</p>
+              {interestRegistrations.filter(r => r.registration_type === 'participant').length === 0 ? (
+                <p className="text-muted-foreground py-8 text-center">No participant registrations yet</p>
               ) : (
                 <div className="space-y-4">
-                  {interestRegistrations.map((reg) => (
-                    <Card key={reg.id}>
-                      <CardContent className="p-4">
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex-1">
-                            <p className="text-xs text-muted-foreground mb-1">
-                              {format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')}
-                            </p>
-                            <p className="font-medium mb-2">{reg.user_email}</p>
-                            <div className="flex flex-wrap gap-2">
-                              {reg.roles.map((role) => (
-                                <Badge key={role} variant="secondary">
-                                  {ROLE_LABELS[role] || role}
-                                </Badge>
-                              ))}
+                  {interestRegistrations
+                    .filter(r => r.registration_type === 'participant')
+                    .map((reg) => (
+                      <Card key={reg.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <p className="text-xs text-muted-foreground mb-1">
+                                {format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')}
+                              </p>
+                              <p className="font-medium mb-1">{reg.user_email}</p>
+                              {reg.supervisor_email && (
+                                <p className="text-sm text-muted-foreground mb-2">
+                                  Supervisor: {reg.supervisor_email}
+                                </p>
+                              )}
+                              <div className="flex flex-wrap gap-2">
+                                {reg.roles.map((role) => (
+                                  <Badge key={role} variant="secondary">
+                                    {ROLE_LABELS[role] || role}
+                                  </Badge>
+                                ))}
+                              </div>
                             </div>
-                        </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                </div>
+              )}
+            </section>
+
+            {/* Coaches Section */}
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  MIC Coaches
+                  <Badge variant="secondary">
+                    {interestRegistrations.filter(r => r.registration_type === 'coach').length}
+                  </Badge>
+                </h2>
+                {interestRegistrations.filter(r => r.registration_type === 'coach').length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => downloadCoachCSV(interestRegistrations)}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Download CSV
+                  </Button>
+                )}
+              </div>
+              
+              {interestRegistrations.filter(r => r.registration_type === 'coach').length === 0 ? (
+                <p className="text-muted-foreground py-8 text-center">No coach registrations yet</p>
+              ) : (
+                <div className="space-y-4">
+                  {interestRegistrations
+                    .filter(r => r.registration_type === 'coach')
+                    .map((reg) => (
+                      <Card key={reg.id}>
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <p className="text-xs text-muted-foreground mb-1">
+                                {format(new Date(reg.created_at), 'dd MMM yyyy, HH:mm')}
+                              </p>
+                              <p className="font-medium mb-1">{reg.user_email}</p>
+                              {reg.supervisor_email && (
+                                <p className="text-sm text-muted-foreground">
+                                  Supervisor: {reg.supervisor_email}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                 </div>
               )}
             </section>
