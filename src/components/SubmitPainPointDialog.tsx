@@ -1,23 +1,7 @@
 import { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogAction,
-  AlertDialogCancel,
-} from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogAction, AlertDialogCancel } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -25,12 +9,12 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Lightbulb, PartyPopper } from "lucide-react";
-
 interface SubmitPainPointDialogProps {
   onSubmit: (title: string, challenge: string, impact: string, interestedInMIC: boolean) => Promise<boolean>;
 }
-
-export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) {
+export function SubmitPainPointDialog({
+  onSubmit
+}: SubmitPainPointDialogProps) {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
@@ -39,16 +23,13 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
   const [interestedInMIC, setInterestedInMIC] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-
   const hasInput = title.trim() || challenge.trim() || impact.trim() || interestedInMIC;
-
   const clearForm = () => {
     setTitle("");
     setChallenge("");
     setImpact("");
     setInterestedInMIC(false);
   };
-
   const handleCancel = () => {
     if (hasInput) {
       setShowCancelConfirm(true);
@@ -56,25 +37,22 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
       setOpen(false);
     }
   };
-
   const confirmCancel = () => {
     clearForm();
     setShowCancelConfirm(false);
     setOpen(false);
   };
-
   useEffect(() => {
     if (showSuccessModal) {
       confetti({
         particleCount: 100,
         spread: 70,
         origin: {
-          y: 0.6,
-        },
+          y: 0.6
+        }
       });
     }
   }, [showSuccessModal]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !challenge.trim() || !impact.trim()) {
@@ -89,9 +67,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
       setShowSuccessModal(true);
     }
   };
-
-  return (
-    <>
+  return <>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button className="gap-2">
@@ -119,18 +95,9 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
 
           <Alert className="bg-amber-100 border-amber-300">
             <AlertDescription className="text-sm text-amber-900">
-              <strong className="block mb-2">An example of a problem statement: Inflexible Leave Application Process</strong>
-              <strong>Workplace Challenge</strong>
+              <strong>An example of a problem statement</strong>
               <p>
-                Staff can only submit leave applications through WOG laptops, limiting flexibility for those working
-                remotely, on the move, or needing to apply for urgent leave outside office hours.{" "}
-              </p>
-              <strong>Impact of Problem</strong>
-              <p>
-                Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days
-                while waiting for laptop access. This restriction causes approval backlogs and affects workforce
-                planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently
-                on the move.
+                Workplace challenge
               </p>
             </AlertDescription>
           </Alert>
@@ -138,49 +105,21 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           <form onSubmit={handleSubmit} className="space-y-4 mt-2">
             <div className="space-y-2">
               <Label htmlFor="title">Title of your problem statement *</Label>
-              <Input
-                id="title"
-                placeholder="Enter a short, descriptive title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                required
-              />
+              <Input id="title" placeholder="Enter a short, descriptive title" value={title} onChange={e => setTitle(e.target.value)} required />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="challenge">Workplace challenge *</Label>
-              <Textarea
-                id="challenge"
-                placeholder="Describe the current challenge, workarounds, and any temporary fixes..."
-                value={challenge}
-                onChange={(e) => setChallenge(e.target.value)}
-                required
-                className="min-h-[150px] resize-none"
-              />
+              <Textarea id="challenge" placeholder="Describe the current challenge, workarounds, and any temporary fixes..." value={challenge} onChange={e => setChallenge(e.target.value)} required className="min-h-[150px] resize-none" />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="impact">Impact of your problem *</Label>
-              <Textarea
-                id="impact"
-                placeholder="Describe who is affected, and any operational implications..."
-                value={impact}
-                onChange={(e) => setImpact(e.target.value)}
-                required
-                className="min-h-[120px] resize-none"
-              />
+              <Textarea id="impact" placeholder="Describe who is affected, and any operational implications..." value={impact} onChange={e => setImpact(e.target.value)} required className="min-h-[120px] resize-none" />
             </div>
 
-            <label
-              htmlFor="interested"
-              className="flex items-start gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors"
-            >
-              <Checkbox
-                id="interested"
-                checked={interestedInMIC}
-                onCheckedChange={(checked) => setInterestedInMIC(checked as boolean)}
-                className="mt-0.5"
-              />
+            <label htmlFor="interested" className="flex items-start gap-3 p-4 rounded-lg border border-primary/30 bg-primary/5 cursor-pointer hover:bg-primary/10 transition-colors">
+              <Checkbox id="interested" checked={interestedInMIC} onCheckedChange={checked => setInterestedInMIC(checked as boolean)} className="mt-0.5" />
               <div className="space-y-1">
                 <span className="text-sm font-medium">
                   I am interested in joining MIC as part of the solutioning team
@@ -237,6 +176,5 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
-  );
+    </>;
 }
