@@ -125,8 +125,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
                 Staff can only submit leave applications through WOG laptops, limiting flexibility for those working
                 remotely, on the move, or needing to apply for urgent leave outside office hours.{" "}
               </p>
-              <br />
-              <strong>Impact of your problem</strong>
+              <strong className="block mt-2">Impact of your problem</strong>
               <p>
                 Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days
                 while waiting for laptop access. This restriction causes approval backlogs and affects workforce
