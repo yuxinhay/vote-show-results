@@ -119,13 +119,18 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
 
           <Alert className="bg-amber-100 border-amber-300">
             <AlertDescription className="text-sm text-amber-900">
-              <strong>An example of a problem statement</strong>
+              <strong>An example of a problem statement: Inflexible Leave Application Process </strong>
+              <strong>Workplace Challenge</strong>
               <p>
                 Staff can only submit leave applications through WOG laptops, limiting flexibility for those working
-                remotely, on the move, or needing to apply for urgent leave outside office hours. Approximately 200
-                staff are affected weekly, with leave applications delayed by an average of 1-2 days while waiting for
-                laptop access. This restriction causes approval backlogs and affects workforce planning, particularly
-                impacting the 40% of our workforce who regularly work remotely or are frequently on the move.
+                remotely, on the move, or needing to apply for urgent leave outside office hours.{" "}
+              </p>
+              <strong>Impact of Problem</strong>
+              <p>
+                Approximately 200 staff are affected weekly, with leave applications delayed by an average of 1-2 days
+                while waiting for laptop access. This restriction causes approval backlogs and affects workforce
+                planning, particularly impacting the 40% of our workforce who regularly work remotely or are frequently
+                on the move.
               </p>
             </AlertDescription>
           </Alert>
