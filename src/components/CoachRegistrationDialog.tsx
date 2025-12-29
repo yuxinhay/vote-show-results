@@ -11,40 +11,22 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info, PartyPopper, AlertCircle } from "lucide-react";
-interface InterestRegistrationDialogProps {
+
+interface CoachRegistrationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-const ROLES = [
-  {
-    id: "product_sponsor",
-    label: "Product Sponsor",
-  },
-  {
-    id: "hustler",
-    label: "Hustler (Product Manager)",
-  },
-  {
-    id: "hipster",
-    label: "Hipster (Designer)",
-  },
-  {
-    id: "hacker",
-    label: "Hacker (Developer)",
-  },
-];
-export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegistrationDialogProps) {
+
+export function CoachRegistrationDialog({ open, onOpenChange }: CoachRegistrationDialogProps) {
   const { user } = useAuth();
-  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [supervisorEmail, setSupervisorEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [hasCoachRegistration, setHasCoachRegistration] = useState(false);
+  const [hasParticipantRegistration, setHasParticipantRegistration] = useState(false);
   const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
 
   useEffect(() => {
@@ -64,63 +46,60 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
       .from("interest_registrations")
       .select("registration_type")
       .eq("user_id", user.id)
-      .eq("registration_type", "coach")
+      .eq("registration_type", "participant")
       .maybeSingle();
 
     if (!error && data) {
-      setHasCoachRegistration(true);
+      setHasParticipantRegistration(true);
     } else {
-      setHasCoachRegistration(false);
+      setHasParticipantRegistration(false);
     }
     setIsCheckingRegistration(false);
   };
-  const handleRoleToggle = (roleId: string) => {
-    setSelectedRoles((prev) => (prev.includes(roleId) ? prev.filter((r) => r !== roleId) : [...prev, roleId]));
-  };
+
   const handleSubmit = async () => {
     if (!user) {
       toast.error("Please sign in to register your interest");
       return;
     }
 
-    if (hasCoachRegistration) {
-      toast.error("You have already registered as a MIC Coach and cannot register as a Participant.");
-      return;
-    }
-
-    if (selectedRoles.length === 0) {
-      toast.error("Please select at least one role");
+    if (hasParticipantRegistration) {
+      toast.error("You have already registered as a MIC Participant and cannot register as a Coach.");
       return;
     }
 
     setIsSubmitting(true);
+
     const { error } = await supabase.from("interest_registrations").insert({
       user_id: user.id,
       user_email: user.email || "",
-      roles: selectedRoles,
+      roles: ["coach"],
       supervisor_email: supervisorEmail.trim() || null,
-      registration_type: "participant",
+      registration_type: "coach",
     });
+
     setIsSubmitting(false);
 
     if (error) {
       if (error.code === "23505") {
-        toast.error("You have already registered as a Participant.");
+        toast.error("You have already registered as a Coach.");
       } else {
         toast.error("Failed to register interest. Please try again.");
-        console.error("Interest registration error:", error);
+        console.error("Coach registration error:", error);
       }
       return;
     }
+
     setShowSuccess(true);
   };
+
   const handleClose = () => {
-    setSelectedRoles([]);
     setSupervisorEmail("");
     setShowSuccess(false);
-    setHasCoachRegistration(false);
+    setHasParticipantRegistration(false);
     onOpenChange(false);
   };
+
   if (showSuccess) {
     return (
       <Dialog open={open} onOpenChange={handleClose}>
@@ -131,7 +110,7 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
             </div>
             <DialogTitle className="text-center">Interest Registered!</DialogTitle>
             <DialogDescription className="text-center">
-              Thank you for your interest in joining the MIC Programme! We've recorded your preferences and will be in
+              Thank you for your interest in becoming a MIC Coach! We've recorded your details and will be in
               touch soon.
             </DialogDescription>
           </DialogHeader>
@@ -142,47 +121,34 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
       </Dialog>
     );
   }
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Register Your Interest</DialogTitle>
-          <DialogDescription>Select the role(s) you're interested in for the MIC Programme.</DialogDescription>
+          <DialogTitle>Register as a MIC Coach</DialogTitle>
+          <DialogDescription>
+            By registering, you're expressing your commitment to guide and mentor product teams throughout their MIC journey.
+          </DialogDescription>
         </DialogHeader>
 
         {isCheckingRegistration ? (
           <div className="py-4 text-center text-muted-foreground">Checking registration status...</div>
-        ) : hasCoachRegistration ? (
+        ) : hasParticipantRegistration ? (
           <Alert variant="destructive" className="my-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              You have already registered as a MIC Coach. You cannot register as both a Participant and a Coach.
+              You have already registered as a MIC Participant. You cannot register as both a Participant and a Coach.
             </AlertDescription>
           </Alert>
         ) : (
           <div className="space-y-4 py-4">
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Which role(s) are you interested in?</Label>
-              {ROLES.map((role) => (
-                <div key={role.id} className="flex items-center space-x-3">
-                  <Checkbox
-                    id={role.id}
-                    checked={selectedRoles.includes(role.id)}
-                    onCheckedChange={() => handleRoleToggle(role.id)}
-                  />
-                  <Label htmlFor={role.id} className="cursor-pointer font-normal">
-                    {role.label}
-                  </Label>
-                </div>
-              ))}
-            </div>
-
             <div className="space-y-2">
-              <Label htmlFor="supervisor-email" className="text-sm font-medium">
+              <Label htmlFor="coach-supervisor-email" className="text-sm font-medium">
                 Direct Supervisor's CPF Email Address
               </Label>
               <Input
-                id="supervisor-email"
+                id="coach-supervisor-email"
                 type="email"
                 placeholder="supervisor@cpf.gov.sg"
                 value={supervisorEmail}
@@ -193,8 +159,7 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
             <Alert className="bg-muted/50">
               <Info className="h-4 w-4" />
               <AlertDescription className="text-sm">
-                Please inform your supervisor about your intention to participate. If you select multiple roles, your
-                final role assignment will be subject to our decision.
+                Please inform your supervisor about your intention to participate as a MIC Coach.
               </AlertDescription>
             </Alert>
           </div>
@@ -204,9 +169,9 @@ export function InterestRegistrationDialog({ open, onOpenChange }: InterestRegis
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          {!hasCoachRegistration && !isCheckingRegistration && (
-            <Button onClick={handleSubmit} disabled={isSubmitting || selectedRoles.length === 0}>
-              {isSubmitting ? "Submitting..." : "Submit Interest"}
+          {!hasParticipantRegistration && !isCheckingRegistration && (
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Confirm Interest"}
             </Button>
           )}
         </DialogFooter>

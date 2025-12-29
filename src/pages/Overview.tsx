@@ -3,19 +3,9 @@ import { Users, Lightbulb, Palette, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { InterestRegistrationDialog } from "@/components/InterestRegistrationDialog";
+import { CoachRegistrationDialog } from "@/components/CoachRegistrationDialog";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 
 const Overview = () => {
   const [showInterestDialog, setShowInterestDialog] = useState(false);
@@ -27,9 +17,8 @@ const Overview = () => {
     setShowInterestDialog(true);
   };
 
-  const handleCoachConfirm = () => {
-    setShowCoachDialog(false);
-    toast.success("Thank you for your interest in becoming a MIC Coach! We will be in touch soon.");
+  const handleCoachClick = () => {
+    setShowCoachDialog(true);
   };
   
   const roles = [{
@@ -154,7 +143,7 @@ const Overview = () => {
             Support innovation by becoming a MIC coach. Coaches play a vital role in guiding product teams through their MIC journey, helping them navigate challenges, refine their ideas, and stay on track to deliver impactful solutions. If you have experience in project management, or simply a passion for mentoring others, consider joining as a coach to help shape the next generation of innovators at CPFB.
           </p>
           <div className="pt-2">
-            <Button size="lg" className="w-full md:w-auto" onClick={() => setShowCoachDialog(true)}>
+            <Button size="lg" className="w-full md:w-auto" onClick={handleCoachClick}>
               I'm interested to be a MIC Coach!
             </Button>
           </div>
@@ -168,21 +157,7 @@ const Overview = () => {
       </section>
 
       <InterestRegistrationDialog open={showInterestDialog} onOpenChange={setShowInterestDialog} />
-
-      <AlertDialog open={showCoachDialog} onOpenChange={setShowCoachDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Confirm Your Interest</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to register your interest as a MIC Coach? By confirming, you'll be expressing your commitment to guide and mentor product teams throughout their MIC journey.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleCoachConfirm}>Yes, I'm interested!</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <CoachRegistrationDialog open={showCoachDialog} onOpenChange={setShowCoachDialog} />
     </div>
   );
 };
