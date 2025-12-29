@@ -120,7 +120,7 @@ export function SubmitPainPointDialog({ onSubmit }: SubmitPainPointDialogProps) 
           <Alert className="bg-amber-100 border-amber-300">
             <AlertDescription className="text-sm text-amber-900">
               <strong className="block mb-2">An example of a problem statement: Inflexible Leave Application Process</strong>
-              <strong>Workplace Challenge</strong>
+              <strong>Workplace challenge</strong>
               <p>
                 Staff can only submit leave applications through WOG laptops, limiting flexibility for those working
                 remotely, on the move, or needing to apply for urgent leave outside office hours.{" "}
