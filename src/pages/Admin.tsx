@@ -8,10 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Check, X, ArrowLeft, User, Users, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { AdminPainPointDetailDialog } from '@/components/AdminPainPointDetailDialog';
 
 interface PendingPainPoint {
   id: string;
   title: string;
+  description: string | null;
   submitter_name: string;
   submitter_department: string | null;
   is_anonymous: boolean;
@@ -86,6 +88,8 @@ const Admin = () => {
   const [painPoints, setPainPoints] = useState<PendingPainPoint[]>([]);
   const [interestRegistrations, setInterestRegistrations] = useState<InterestRegistration[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [selectedPainPoint, setSelectedPainPoint] = useState<PendingPainPoint | null>(null);
+  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchPainPoints();
@@ -151,6 +155,26 @@ const Admin = () => {
     fetchPainPoints();
   };
 
+  const handleArchive = async (id: string) => {
+    const { error } = await supabase
+      .from('pain_points')
+      .update({ status: 'archived' })
+      .eq('id', id);
+
+    if (error) {
+      toast.error('Failed to archive');
+      return;
+    }
+
+    toast.success('Archived');
+    fetchPainPoints();
+  };
+
+  const openDetailDialog = (painPoint: PendingPainPoint) => {
+    setSelectedPainPoint(painPoint);
+    setIsDetailDialogOpen(true);
+  };
+
   // Show loading while data is being fetched
   if (isLoadingData) {
     return (
@@ -202,27 +226,20 @@ const Admin = () => {
               ) : (
                 <div className="space-y-4">
                   {pendingItems.map((pp) => (
-                    <Card key={pp.id}>
+                    <Card 
+                      key={pp.id} 
+                      className="cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => openDetailDialog(pp)}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-4">
                           <div className="flex-1">
-                            <p className="text-xs text-muted-foreground mb-1">
-                              {format(new Date(pp.created_at), 'dd MMM yyyy, HH:mm')}
+                            <p className="font-medium mb-1">{pp.title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {pp.is_anonymous ? 'Anonymous' : pp.submitter_name}
                             </p>
-                            <p className="font-medium mb-2">{pp.title}</p>
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <User className="h-4 w-4" />
-                              {pp.is_anonymous ? (
-                                <span className="italic">Anonymous</span>
-                              ) : (
-                                <span>
-                                  {pp.submitter_name}
-                                  {pp.submitter_department && ` • ${pp.submitter_department}`}
-                                </span>
-                              )}
-                            </div>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                             <Button
                               size="sm"
                               variant="outline"
@@ -259,7 +276,11 @@ const Admin = () => {
               ) : (
                 <div className="space-y-2">
                   {approvedItems.map((pp) => (
-                    <Card key={pp.id} className="bg-muted/30">
+                    <Card 
+                      key={pp.id} 
+                      className="bg-muted/30 cursor-pointer hover:bg-muted/50 transition-colors"
+                      onClick={() => openDetailDialog(pp)}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-start justify-between gap-4">
                           <div>
@@ -268,7 +289,7 @@ const Admin = () => {
                               {pp.is_anonymous ? 'Anonymous' : pp.submitter_name}
                             </p>
                           </div>
-                          <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
                             <Button
                               size="sm"
                               variant="outline"
@@ -281,18 +302,7 @@ const Admin = () => {
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={async () => {
-                                const { error } = await supabase
-                                  .from('pain_points')
-                                  .update({ status: 'archived' })
-                                  .eq('id', pp.id);
-                                if (error) {
-                                  toast.error('Failed to archive');
-                                } else {
-                                  toast.success('Archived');
-                                  fetchPainPoints();
-                                }
-                              }}
+                              onClick={() => handleArchive(pp.id)}
                             >
                               Archive
                             </Button>
@@ -316,7 +326,11 @@ const Admin = () => {
               ) : (
                 <div className="space-y-2">
                   {rejectedItems.map((pp) => (
-                    <Card key={pp.id} className="bg-destructive/10">
+                    <Card 
+                      key={pp.id} 
+                      className="bg-destructive/10 cursor-pointer hover:bg-destructive/20 transition-colors"
+                      onClick={() => openDetailDialog(pp)}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -345,7 +359,11 @@ const Admin = () => {
               ) : (
                 <div className="space-y-2">
                   {archivedItems.map((pp) => (
-                    <Card key={pp.id} className="bg-muted/50 opacity-75">
+                    <Card 
+                      key={pp.id} 
+                      className="bg-muted/50 opacity-75 cursor-pointer hover:opacity-100 transition-opacity"
+                      onClick={() => openDetailDialog(pp)}
+                    >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -357,7 +375,10 @@ const Admin = () => {
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleApprove(pp.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleApprove(pp.id);
+                            }}
                           >
                             <Check className="h-4 w-4 mr-1" />
                             Restore
@@ -480,6 +501,16 @@ const Admin = () => {
             </section>
           </TabsContent>
         </Tabs>
+
+        {/* Detail Dialog */}
+        <AdminPainPointDetailDialog
+          open={isDetailDialogOpen}
+          onOpenChange={setIsDetailDialogOpen}
+          painPoint={selectedPainPoint}
+          onApprove={handleApprove}
+          onReject={handleReject}
+          onArchive={handleArchive}
+        />
       </div>
     </div>
   );
