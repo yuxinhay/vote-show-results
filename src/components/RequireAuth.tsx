@@ -6,21 +6,6 @@ interface RequireAuthProps {
 }
 
 export function RequireAuth({ children }: RequireAuthProps) {
-  const { user, isLoading } = useAuth();
-  const location = useLocation();
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Loading...</p>
-      </div>
-    );
-  }
-
-  if (!user) {
-    // Save the attempted location for redirect after login
-    return <Navigate to="/auth" replace state={{ from: location.pathname + location.search }} />;
-  }
-
+  // TEMPORARY: Bypass auth check for development
   return <>{children}</>;
 }
