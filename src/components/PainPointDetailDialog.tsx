@@ -126,16 +126,30 @@ export function PainPointDetailDialog({
 
   // Parse description to extract challenge and impact
   const parseDescription = (desc: string | null) => {
-    if (!desc) return {
-      challenge: '',
-      impact: ''
-    };
-    const challengeMatch = desc.match(/\*\*Workplace Challenge:\*\*\n([\s\S]*?)(?=\n\n\*\*Impact:|$)/);
-    const impactMatch = desc.match(/\*\*Impact:\*\*\n([\s\S]*?)$/);
-    return {
-      challenge: challengeMatch ? challengeMatch[1].trim() : desc,
-      impact: impactMatch ? impactMatch[1].trim() : ''
-    };
+    if (!desc) return { challenge: '', impact: '' };
+
+    const text = desc.replace(/\r\n/g, '\n').trim();
+
+    // Format A: markdown sections produced by our submission form
+    // **Workplace Challenge:**\n...\n\n**Impact:**\n...
+    const challengeMd = text.match(
+      /\*\*Workplace Challenge:\*\*\s*\n([\s\S]*?)(?=\n\s*\n\*\*Impact:|$)/i
+    );
+    const impactMd = text.match(/\*\*Impact:\*\*\s*\n([\s\S]*?)$/i);
+
+    // Format B: guided prompt-style dummy content
+    // What's the current challenge? ...\n\nWhat are the operational/business implications? ...
+    const challengePrompt = text.match(
+      /What's the current challenge\?\s*([\s\S]*?)(?=\n\s*\nWho does it affect and how\?|\n\s*\nWhat are the operational\/business implications\?|$)/i
+    );
+    const impactPrompt = text.match(
+      /What are the operational\/business implications\?\s*([\s\S]*?)(?=\n\s*\nWhat would success look like\?|$)/i
+    );
+
+    const challenge = (challengeMd?.[1] ?? challengePrompt?.[1] ?? text).trim();
+    const impact = (impactMd?.[1] ?? impactPrompt?.[1] ?? '').trim();
+
+    return { challenge, impact };
   };
   const {
     challenge,
